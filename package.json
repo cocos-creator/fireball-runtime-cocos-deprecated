@@ -1,8 +1,8 @@
 {
-  "name": "fireball-runtime-basic",
+  "name": "fireball-runtime-cocos",
   "version": "0.2.1",
-  "description": "Basic runtime of Fireball engine for html5",
-  "homepage": "https://github.com/fireball-x/engine",
+  "description": "Cocos runtime of Fireball engine for html5",
+  "homepage": "https://github.com/fireball-x/runtime-cocos",
   "license": "MIT",
   "licenseUrl": "http://opensource.org/licenses/MIT",
   "dependencies": {},

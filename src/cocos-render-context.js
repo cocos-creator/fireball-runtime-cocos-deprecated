@@ -1,15 +1,6 @@
 
-(function () {
-    // Tweak PIXI
-    PIXI.dontSayHello = true;
-    var EMPTY_METHOD = function () {};
-    PIXI.DisplayObject.prototype.updateTransform = EMPTY_METHOD;
-    PIXI.DisplayObject.prototype.displayObjectUpdateTransform = EMPTY_METHOD;
-    PIXI.DisplayObjectContainer.prototype.displayObjectContainerUpdateTransform = EMPTY_METHOD;
-})();
-
 /**
- * The web renderer implemented rely on pixi.js
+ * The web renderer implemented rely on cocos2d-js
  */
 var RenderContext = (function () {
 
@@ -236,7 +227,7 @@ var RenderContext = (function () {
             var firstChildEntity = customFirstChildEntity || entityParent._children[0];
             if (firstChildEntity) {
                 var firstChildCocos = inSceneView ? firstChildEntity._ccNodeInScene : firstChildEntity._ccNode;
-                var offset = pixiParent.children.indexOf(firstChildCocos);
+                var offset = cocosParent.children.indexOf(firstChildCocos);
                 if (offset !== -1) {
                     return offset;
                 }
@@ -244,7 +235,7 @@ var RenderContext = (function () {
                     return cocosParent.children.length;
                 }
                 else {
-                    Fire.error("%s's pixi object not contains in its pixi parent's children", firstChildEntity.name);
+                    Fire.error("%s's cocos object not contains in its cocos parent's children", firstChildEntity.name);
                     return -1;
                 }
             }
@@ -318,9 +309,9 @@ var RenderContext = (function () {
     };
 
     /**
-     * create pixi nodes recursively
+     * create cocos nodes recursively
      * @param {Entity} entity
-     * @param {boolean} addToScene - add to pixi stage now if entity is root
+     * @param {boolean} addToScene - add to cocos stage now if entity is root
      */
     RenderContext.prototype.onEntityCreated = function (entity, addToScene) {
         this.game.setEnvironment();
@@ -473,53 +464,6 @@ var RenderContext = (function () {
         // @endif
     };
 
-    ///**
-    // * @param {Fire.SpriteRenderer} target
-    // * @param {Fire.SpriteRenderer} transform
-    // * @param {Fire.SpriteRenderer} oldParent
-    // */
-    //RenderContext.prototype.updateHierarchy = function (target, transform, oldParent) {
-    //    if (target._renderObj || target._renderObjInScene) {
-    //        if (transform._parent === oldParent) {
-    //            // oldAncestor changed its sibling index
-    //            if (target._renderObj) {
-    //                this._updateSiblingIndex(transform);
-    //            }
-    //            if (target._renderObjInScene) {
-    //                this.sceneView._updateSiblingIndex(transform);
-    //            }
-    //            return true;
-    //        }
-    //        else {
-    //            // parent changed
-    //        }
-    //    }
-    //    else {
-    //        Fire.error('' + target + ' must be added to render context first!');
-    //    }
-    //    return false;
-    //};
-
-    //RenderContext.prototype._updateSiblingIndex = function (transform) {
-    //    var pixiNode = this._pixiObjects[transform.id];
-    //    var array = pixiNode.parent.children;
-    //    var oldIndex = array.indexOf(pixiNode);
-    //    var newIndex = transform.getSiblingIndex(); // TODO: 如果前面的节点包含空的entity，则这个new index会有问题
-    //    // skip entities not exists in pixi
-    //    while ((--newIndex) > 0) {
-    //        var previous = transform.getSibling(newIndex);
-    //        if (previous.id) {
-    //        }
-    //    }
-    //    array.splice(oldIndex, 1);
-    //    if (newIndex < array.length) {
-    //        array.splice(newIndex, 0, pixiNode);
-    //    }
-    //    else {
-    //        array.push(pixiNode);
-    //    }
-    //};
-
     /**
      * @param sprite {Fire.Sprite}
      */
@@ -559,7 +503,7 @@ RenderContext.prototype.checkMatchCurrentScene = function () {
         //    var gameNode = gameNodes[g++];
         //}
         if (ent._ccNode !== gameNode) {
-            throw new Error('entity does not match pixi game node: ' + ent.name);
+            throw new Error('entity does not match cocos game node: ' + ent.name);
         }
 
         var childCount = ent._children.length;
@@ -568,7 +512,7 @@ RenderContext.prototype.checkMatchCurrentScene = function () {
             sceneChildrenOffset = scope.sceneView._getChildrenOffset(ent);
             if (sceneNode.children.length !== childCount + sceneChildrenOffset) {
                 console.error('Mismatched list of child elements in Scene view, entity: %s,\n' +
-                    'pixi childCount: %s, entity childCount: %s, rcOffset: %s',
+                    'cocos childCount: %s, entity childCount: %s, rcOffset: %s',
                     ent.name, sceneNode.children.length, childCount, sceneChildrenOffset);
                 throw new Error('(see above error)');
             }
@@ -591,12 +535,6 @@ RenderContext.prototype.checkMatchCurrentScene = function () {
         }
         checkMatch(entities[i], cocosGameNodes[i], cocosSceneNodes && cocosSceneNodes[i]);
     }
-
-    //if (g !== pixiGameNodes.length) {
-    //    Fire.error('pixi has extra game node, pixi count: ' + pixiGameNodes.length + ' expected count: ' + g);
-    //    return false;
-    //}
-    // 目前不测试renderer
 };
 // @endif
 
