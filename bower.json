@@ -1,0 +1,21 @@
+{
+  "name": "fireball-runtime-basic",
+  "version": "0.2.1",
+  "homepage": "https://github.com/fireball-x/runtime-basic",
+  "authors": [
+    "Jare Guo <jare.guo@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "ext",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "pixi": "2.2.3"
+  }
+}
