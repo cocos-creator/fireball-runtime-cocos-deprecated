@@ -38,7 +38,7 @@ Graphics.prototype.lineStyle = function (lineWidth, color24, alpha) {
 
 Graphics.prototype.lineTo = function (x, y) {
     var nextPos = cc.p(x, y);
-    this.drawNode.drawSegment(this.lastPos, nextPos, this.color);
+    this.drawNode.drawSegment(this.lastPos, nextPos);
     this.lastPos = nextPos;
     return this;
 };
