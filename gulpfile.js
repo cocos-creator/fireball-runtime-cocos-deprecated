@@ -117,6 +117,10 @@ var paths = {
 
         "src/cocos-render-context.js",
     ],
+    editor: [
+        // modules in editor only
+        'src/editor/graphics.js',
+    ],
     index: 'src/index.js',
 
     // output
@@ -132,7 +136,7 @@ var paths = {
 /////////////////////////////////////////////////////////////////////////////
 
 gulp.task('js-dev', function() {
-    return gulp.src(paths.src)
+    return gulp.src(paths.src.concat(paths.editor))
         .pipe(jshint({
            multistr: true,
            smarttabs: false,
@@ -147,7 +151,7 @@ gulp.task('js-dev', function() {
 });
 
 gulp.task('js-min', function() {
-    return gulp.src(paths.src)
+    return gulp.src(paths.src.concat(paths.editor))
         .pipe(concat(Path.basename(paths.output_min)))
         .pipe(fb.wrapModule(paths.index))
         .pipe(preprocess({context: { EDITOR: true, DEV: true }}))
@@ -214,7 +218,7 @@ gulp.task('clean', function(cb) {
 
 // watch
 gulp.task('watch', function() {
-    gulp.watch(paths.src.concat(paths.index), ['default']).on ( 'error', gutil.log );
+    gulp.watch(paths.src.concat(paths.index, paths.editor), ['default']).on ( 'error', gutil.log );
 });
 
 // tasks
