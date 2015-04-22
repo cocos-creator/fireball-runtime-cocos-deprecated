@@ -538,4 +538,4 @@ RenderContext.prototype.checkMatchCurrentScene = function () {
 };
 // @endif
 
-Fire.Runtime._RenderContext = RenderContext;
+Fire._Runtime.RenderContext = RenderContext;

@@ -113,6 +113,12 @@ var paths = {
             "src/engine/cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
             "src/engine/cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
 
+            // TODO: editor only modules
+            "src/engine/cocos2d/shape-nodes/CCDrawNode.js",
+            "src/engine/cocos2d/shape-nodes/CCDrawNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/shape-nodes/CCDrawNodeWebGLRenderCmd.js",
+            //
+
             "src/engine/cocos2d/audio/CCAudio.js",
 
             "src/engine/cocos2d/kazmath/utility.js",
