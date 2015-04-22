@@ -19,10 +19,12 @@ var fb = require('gulp-fb');
 var paths = {
     // source
     src: [
+        "src/extends.js",
         "src/cocos-render-context.js",
     ],
     editor: [
         // modules in editor only
+        'src/editor/render-context-extends.js',
         'src/editor/graphics.js',
     ],
     index: 'src/index.js',
