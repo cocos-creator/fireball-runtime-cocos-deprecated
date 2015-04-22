@@ -1,5 +1,6 @@
-(function () {
 // @ifndef PLAYER
+// 这个宏确实是在文件最开头
+(function () {
     var root = typeof global !== 'undefined' ? global : this;
     var Fire = root.Fire || {};
 

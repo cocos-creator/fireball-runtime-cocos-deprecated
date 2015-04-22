@@ -1,6 +1,6 @@
 ﻿var Path = require('path');
 //var fs = require('fs');
-//var es = require('event-stream');
+var es = require('event-stream');
 var del = require('del');
 
 var gulp = require('gulp');
@@ -19,102 +19,6 @@ var fb = require('gulp-fb');
 var paths = {
     // source
     src: [
-        "src/engine/CCBoot.js",
-        "src/engine/CCDebugger.js",
-        "src/engine/Base64Images.js",
-        "src/engine/cocos2d/core/platform/CCClass.js",
-        "src/engine/cocos2d/core/platform/CCCommon.js",
-        "src/engine/cocos2d/core/cocoa/CCGeometry.js",
-        "src/engine/cocos2d/core/platform/CCSAXParser.js",
-        "src/engine/cocos2d/core/platform/CCLoaders.js",
-        "src/engine/cocos2d/core/platform/CCConfig.js",
-        "src/engine/cocos2d/core/platform/miniFramework.js",
-        "src/engine/cocos2d/core/platform/CCMacro.js",
-        "src/engine/cocos2d/core/platform/CCTypesWebGL.js",
-        "src/engine/cocos2d/core/platform/CCTypesPropertyDefine.js",
-        "src/engine/cocos2d/core/platform/CCTypes.js",
-        "src/engine/cocos2d/core/platform/CCEGLView.js",
-        "src/engine/cocos2d/core/platform/CCScreen.js",
-        "src/engine/cocos2d/core/platform/CCVisibleRect.js",
-
-        "src/engine/cocos2d/core/platform/CCInputManager.js",
-        "src/engine/cocos2d/core/platform/CCInputExtension.js",
-
-        "src/engine/cocos2d/core/cocoa/CCAffineTransform.js",
-        "src/engine/cocos2d/core/support/CCPointExtension.js",
-        "src/engine/cocos2d/core/support/CCVertex.js",
-        "src/engine/cocos2d/core/support/TransformUtils.js",
-        "src/engine/cocos2d/core/event-manager/CCTouch.js",
-
-        "src/engine/cocos2d/core/event-manager/CCEvent.js",
-        "src/engine/cocos2d/core/event-manager/CCEventListener.js",
-        "src/engine/cocos2d/core/event-manager/CCEventManager.js",
-        "src/engine/cocos2d/core/event-manager/CCEventExtension.js",
-
-        "src/engine/cocos2d/core/renderer/RendererCanvas.js",
-        "src/engine/cocos2d/core/renderer/RendererWebGL.js",
-
-        "src/engine/cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
-        "src/engine/cocos2d/core/base-nodes/CCNode.js",
-        "src/engine/cocos2d/core/base-nodes/CCNodeCanvasRenderCmd.js",
-        "src/engine/cocos2d/core/base-nodes/CCNodeWebGLRenderCmd.js",
-
-        "src/engine/cocos2d/core/textures/TexturesWebGL.js",
-        "src/engine/cocos2d/core/textures/TexturesPropertyDefine.js",
-        "src/engine/cocos2d/core/textures/CCTexture2D.js",
-        "src/engine/cocos2d/core/textures/CCTextureCache.js",
-
-        "src/engine/cocos2d/core/scenes/CCScene.js",
-        "src/engine/cocos2d/core/scenes/CCLoaderScene.js",
-
-        "src/engine/cocos2d/core/layers/CCLayer.js",
-        "src/engine/cocos2d/core/layers/CCLayerCanvasRenderCmd.js",
-        "src/engine/cocos2d/core/layers/CCLayerWebGLRenderCmd.js",
-
-        "src/engine/cocos2d/core/sprites/SpritesPropertyDefine.js",
-        "src/engine/cocos2d/core/sprites/CCSprite.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteCanvasRenderCmd.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteWebGLRenderCmd.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteBatchNode.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js",
-        "src/engine/cocos2d/core/sprites/CCAnimation.js",
-        "src/engine/cocos2d/core/sprites/CCAnimationCache.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteFrame.js",
-        "src/engine/cocos2d/core/sprites/CCSpriteFrameCache.js",
-
-        "src/engine/cocos2d/core/CCConfiguration.js",
-
-        "src/engine/cocos2d/core/CCDirector.js",
-        "src/engine/cocos2d/core/CCDirectorWebGL.js",
-
-        "src/engine/cocos2d/core/CCScheduler.js",
-
-        "src/engine/cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
-        "src/engine/cocos2d/core/labelttf/CCLabelTTF.js",
-        "src/engine/cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
-        "src/engine/cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
-
-        "src/engine/cocos2d/audio/CCAudio.js",
-
-        "src/engine/cocos2d/kazmath/utility.js",
-        "src/engine/cocos2d/kazmath/vec2.js",
-        "src/engine/cocos2d/kazmath/vec3.js",
-        "src/engine/cocos2d/kazmath/vec4.js",
-        "src/engine/cocos2d/kazmath/ray2.js",
-        "src/engine/cocos2d/kazmath/mat3.js",
-        "src/engine/cocos2d/kazmath/mat4.js",
-        "src/engine/cocos2d/kazmath/plane.js",
-        "src/engine/cocos2d/kazmath/quaternion.js",
-        "src/engine/cocos2d/kazmath/aabb.js",
-        "src/engine/cocos2d/kazmath/gl/mat4stack.js",
-        "src/engine/cocos2d/kazmath/gl/matrix.js",
-
-        "src/engine/cocos2d/shaders/CCShaders.js",
-        "src/engine/cocos2d/shaders/CCShaderCache.js",
-        "src/engine/cocos2d/shaders/CCGLProgram.js",
-        "src/engine/cocos2d/shaders/CCGLStateCache.js",
-
         "src/cocos-render-context.js",
     ],
     editor: [
@@ -128,7 +32,110 @@ var paths = {
     output_dev: 'bin/dev/runtime.js',
     output_min: 'bin/min/runtime.js',
     output_player_dev: 'runtime.player.dev.js',
-    output_player: 'runtime.player.js'
+    output_player: 'runtime.player.js',
+
+    // engine
+    engine: {
+        src: [
+            "src/engine/CCBoot.js",
+            "src/engine/CCDebugger.js",
+            "src/engine/Base64Images.js",
+            "src/engine/cocos2d/core/platform/CCClass.js",
+            "src/engine/cocos2d/core/platform/CCCommon.js",
+            "src/engine/cocos2d/core/cocoa/CCGeometry.js",
+            "src/engine/cocos2d/core/platform/CCSAXParser.js",
+            "src/engine/cocos2d/core/platform/CCLoaders.js",
+            "src/engine/cocos2d/core/platform/CCConfig.js",
+            "src/engine/cocos2d/core/platform/miniFramework.js",
+            "src/engine/cocos2d/core/platform/CCMacro.js",
+            "src/engine/cocos2d/core/platform/CCTypesWebGL.js",
+            "src/engine/cocos2d/core/platform/CCTypesPropertyDefine.js",
+            "src/engine/cocos2d/core/platform/CCTypes.js",
+            "src/engine/cocos2d/core/platform/CCEGLView.js",
+            "src/engine/cocos2d/core/platform/CCScreen.js",
+            "src/engine/cocos2d/core/platform/CCVisibleRect.js",
+
+            "src/engine/cocos2d/core/platform/CCInputManager.js",
+            "src/engine/cocos2d/core/platform/CCInputExtension.js",
+
+            "src/engine/cocos2d/core/cocoa/CCAffineTransform.js",
+            "src/engine/cocos2d/core/support/CCPointExtension.js",
+            "src/engine/cocos2d/core/support/CCVertex.js",
+            "src/engine/cocos2d/core/support/TransformUtils.js",
+            "src/engine/cocos2d/core/event-manager/CCTouch.js",
+
+            "src/engine/cocos2d/core/event-manager/CCEvent.js",
+            "src/engine/cocos2d/core/event-manager/CCEventListener.js",
+            "src/engine/cocos2d/core/event-manager/CCEventManager.js",
+            "src/engine/cocos2d/core/event-manager/CCEventExtension.js",
+
+            "src/engine/cocos2d/core/renderer/RendererCanvas.js",
+            "src/engine/cocos2d/core/renderer/RendererWebGL.js",
+
+            "src/engine/cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
+            "src/engine/cocos2d/core/base-nodes/CCNode.js",
+            "src/engine/cocos2d/core/base-nodes/CCNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/core/base-nodes/CCNodeWebGLRenderCmd.js",
+
+            "src/engine/cocos2d/core/textures/TexturesWebGL.js",
+            "src/engine/cocos2d/core/textures/TexturesPropertyDefine.js",
+            "src/engine/cocos2d/core/textures/CCTexture2D.js",
+            "src/engine/cocos2d/core/textures/CCTextureCache.js",
+
+            "src/engine/cocos2d/core/scenes/CCScene.js",
+            "src/engine/cocos2d/core/scenes/CCLoaderScene.js",
+
+            "src/engine/cocos2d/core/layers/CCLayer.js",
+            "src/engine/cocos2d/core/layers/CCLayerCanvasRenderCmd.js",
+            "src/engine/cocos2d/core/layers/CCLayerWebGLRenderCmd.js",
+
+            "src/engine/cocos2d/core/sprites/SpritesPropertyDefine.js",
+            "src/engine/cocos2d/core/sprites/CCSprite.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteCanvasRenderCmd.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteWebGLRenderCmd.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteBatchNode.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteBatchNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteBatchNodeWebGLRenderCmd.js",
+            "src/engine/cocos2d/core/sprites/CCAnimation.js",
+            "src/engine/cocos2d/core/sprites/CCAnimationCache.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteFrame.js",
+            "src/engine/cocos2d/core/sprites/CCSpriteFrameCache.js",
+
+            "src/engine/cocos2d/core/CCConfiguration.js",
+
+            "src/engine/cocos2d/core/CCDirector.js",
+            "src/engine/cocos2d/core/CCDirectorWebGL.js",
+
+            "src/engine/cocos2d/core/CCScheduler.js",
+
+            "src/engine/cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
+            "src/engine/cocos2d/core/labelttf/CCLabelTTF.js",
+            "src/engine/cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
+            "src/engine/cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
+
+            "src/engine/cocos2d/audio/CCAudio.js",
+
+            "src/engine/cocos2d/kazmath/utility.js",
+            "src/engine/cocos2d/kazmath/vec2.js",
+            "src/engine/cocos2d/kazmath/vec3.js",
+            "src/engine/cocos2d/kazmath/vec4.js",
+            "src/engine/cocos2d/kazmath/ray2.js",
+            "src/engine/cocos2d/kazmath/mat3.js",
+            "src/engine/cocos2d/kazmath/mat4.js",
+            "src/engine/cocos2d/kazmath/plane.js",
+            "src/engine/cocos2d/kazmath/quaternion.js",
+            "src/engine/cocos2d/kazmath/aabb.js",
+            "src/engine/cocos2d/kazmath/gl/mat4stack.js",
+            "src/engine/cocos2d/kazmath/gl/matrix.js",
+
+            "src/engine/cocos2d/shaders/CCShaders.js",
+            "src/engine/cocos2d/shaders/CCShaderCache.js",
+            "src/engine/cocos2d/shaders/CCGLProgram.js",
+            "src/engine/cocos2d/shaders/CCGLStateCache.js",
+        ],
+        output_min: 'lib/cocos2d.js',
+        output_dev: 'lib/cocos2d.dev.js'
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -185,7 +192,39 @@ gulp.task('js-player', function() {
 
 gulp.task('js-all', ['js-dev', 'js-min', 'js-player-dev', 'js-player']);
 
-////////////////////////////////////////////////////
+///////////////////////////////////////////////////
+// compile cocos2d
+///////////////////////////////////////////////////
+
+gulp.task('build-cocos2d', function () {
+    return gulp.src(paths.engine.src)
+        .pipe(concat(Path.basename(paths.engine.output_dev)))
+        .pipe(gulp.dest(Path.dirname(paths.engine.output_dev)))
+        .pipe(uglify({
+            //compress: {
+            //    dead_code: false,
+            //    unused: false
+            //}
+        }))
+        .pipe(rename(Path.basename(paths.engine.output_min)))
+        .pipe(gulp.dest(Path.dirname(paths.engine.output_min)));
+});
+
+gulp.task('cp-cocos2d', function () {
+    var name = 'cocos2d.js';
+    
+    var devStream = gulp.src(paths.engine.output_dev)
+        .pipe(rename(name))
+        .pipe(gulp.dest(Path.dirname(paths.output_dev)));
+
+    var minStream = gulp.src(paths.engine.output_min)
+        .pipe(rename(name))
+        .pipe(gulp.dest(Path.dirname(paths.output_min)));
+
+    return es.merge(devStream, minStream);
+});
+
+///////////////////////////////////////////////////
 // clean
 ///////////////////////////////////////////////////
 
@@ -219,9 +258,10 @@ gulp.task('clean', function(cb) {
 // watch
 gulp.task('watch', function() {
     gulp.watch(paths.src.concat(paths.index, paths.editor), ['default']).on ( 'error', gutil.log );
+    gulp.watch([paths.engine.output_dev, paths.engine.output_min], ['cp-cocos2d']).on ( 'error', gutil.log );
 });
 
 // tasks
-gulp.task('min', ['js-min', 'js-player-dev', 'js-player']);
-gulp.task('dev', ['js-dev', 'js-player-dev', 'js-player']);
+gulp.task('min', ['js-min', 'js-player-dev', 'js-player', 'cp-cocos2d']);
+gulp.task('dev', ['js-dev', 'js-player-dev', 'js-player', 'cp-cocos2d']);
 gulp.task('default', ['dev', 'min']);
