@@ -19,6 +19,7 @@ var fb = require('gulp-fb');
 var paths = {
     // source
     src: [
+        "src/runtime.js",
         "src/extends.js",
         "src/cocos-render-context.js",
     ],

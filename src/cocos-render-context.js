@@ -71,7 +71,7 @@ var RenderContext = (function () {
         }
     });
 
-    Object.defineProperty(RenderContext.prototype, 'domNode', {
+    Object.defineProperty(RenderContext.prototype, 'container', {
         get: function () {
             return this.game.container;
         }
@@ -538,4 +538,4 @@ RenderContext.prototype.checkMatchCurrentScene = function () {
 };
 // @endif
 
-Fire._Runtime.RenderContext = RenderContext;
+Runtime.RenderContext = RenderContext;

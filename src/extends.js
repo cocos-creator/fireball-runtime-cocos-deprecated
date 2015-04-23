@@ -1,4 +1,4 @@
-Fire.Color.prototype.toCCColor = function () {
+Color.prototype.toCCColor = function () {
     return {
         r: this.r * 255,
         g: this.g * 255,
