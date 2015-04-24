@@ -1,6 +1,6 @@
 
 /**
- * The web renderer implemented rely on cocos2d-js
+ * The render context implemented rely on cocos2d-js
  */
 var RenderContext = (function () {
 
@@ -27,7 +27,7 @@ var RenderContext = (function () {
             "width": width,
             "height": height,
             "debugMode" : 1,
-            "showFPS" : true,
+            "showFPS" : false,
             "frameRate" : 60,
             "id" : canvas,
             "renderMode" : 1,
@@ -406,22 +406,32 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.updateTransform = function (target, matrix) {
-        // apply matrix
-        var rot = 360 * (matrix.getRotation() / Math.PI);
-        if (target._renderObj) {
-            target._renderObj.setPosition(matrix.tx, matrix.ty);
-            target._renderObj.setRotation(rot);
-            target._renderObj.setScale(matrix.a, matrix.d);
-            target._renderObj.setOpacity(target._color.a * 255);
-        }
+        var node;
         // @ifdef EDITOR
-        if (target._renderObjInScene) {
-            target._renderObjInScene.setPosition(matrix.tx, matrix.ty);
-            target._renderObjInScene.setRotation(rot);
-            target._renderObjInScene.setScale(matrix.a, matrix.d);
-            target._renderObjInScene.setOpacity(target._color.a * 255);
-        }
+        node = this.isSceneView ? target._renderObjInScene : target._renderObj;
         // @endif
+        // @ifndef EDITOR
+        node = target._renderObj;
+        // @endif
+
+        if (node) {
+            var rot = matrix.getRotation() * Math.R2D;
+            // negate the rotation because our rotation transform not the same with cocos
+            rot = -rot;
+            var scale = matrix.getScale();
+            var alpha = target._color.a * 255;
+
+            node.setPosition(matrix.tx, matrix.ty);
+            if (node._rotationX !== rot) {
+                node.setRotation(rot);
+            }
+            if (node._scaleX !== scale.x || node._scaleY !== scale.y) {
+                node.setScale(scale.x, scale.y);
+            }
+            if (node._realOpacity !== alpha) {
+                node.setOpacity(alpha);
+            }
+        }
     };
 
     /**
