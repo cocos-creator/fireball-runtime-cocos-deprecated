@@ -5,10 +5,10 @@
 var RenderContext = (function () {
 
     /**
-     * render context 将在 pixi 中维护同样的 scene graph，这样做主要是为之后的 clipping 和 culling 提供支持。
-     * 这里采用空间换时间的策略，所有 entity 都有对应的 PIXI.DisplayObjectContainer。
+     * render context 将在 cocos 中维护同样的 scene graph，这样做主要是为之后的 clipping 和 culling 提供支持。
+     * 这里采用空间换时间的策略，所有 entity 都有对应的 cc.Node。
      * 毕竟一般 dummy entity 不会很多，因此这样产生的冗余对象可以忽略。
-     * 值得注意的是，sprite 等 pixi object，被视为 entity 对应的 PIXI.DisplayObjectContainer 的子物体，
+     * 值得注意的是，sprite 等节点，被视为 entity 对应的 cc.Node 的子物体，
      * 并且排列在所有 entity 之前，以达到最先渲染的效果。
      *
      * @param {number} width
@@ -147,7 +147,7 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.onRootEntityCreated = function (entity) {
-        // always create pixi node even if is scene gizmo, to keep all their indice sync with transforms' sibling indice.
+        // always create node even if is scene gizmo, to keep all their indice sync with transforms' sibling indice.
         entity._ccNode = new cc.Node();
         entity._ccNode.setAnchorPoint(0, 1);
         if (Engine._canModifyCurrentScene) {
@@ -155,6 +155,7 @@ var RenderContext = (function () {
             // attach node if created dynamically
             this.root.addChild(entity._ccNode);
         }
+        // @ifdef EDITOR
         if (this.sceneView) {
             entity._ccNodeInScene = new cc.Node();
             entity._ccNodeInScene.setAnchorPoint(0, 1);
@@ -164,31 +165,34 @@ var RenderContext = (function () {
                 this.sceneView.root.addChild(entity._ccNodeInScene);
             }
         }
+        // @endif
     };
 
     RenderContext.prototype.onEntityRemoved = function (entity) {
-        if (entity._ccNode) {
-            if (entity._ccNode.parent) {
+        var node = entity._ccNode;
+        if (node) {
+            if (node.parent) {
                 this.game.setEnvironment();
-                entity._ccNode.parent.removeChild(entity._ccNode);
+                node.parent.removeChild(node);
             }
             entity._ccNode = null;
         }
-        if (entity._ccNodeInScene) {
-            if (entity._ccNodeInScene.parent) {
+        // @ifdef EDITOR
+        node = entity._ccNodeInScene;
+        if (node) {
+            if (node.parent) {
                 this.sceneView.game.setEnvironment();
-                entity._ccNodeInScene.parent.removeChild(entity._ccNodeInScene);
+                node.parent.removeChild(node);
             }
             entity._ccNodeInScene = null;
         }
+        // @endif
     };
 
     RenderContext.prototype.onEntityParentChanged = function (entity, oldParent) {
-        this.game.setEnvironment();
         this._setParentNode(entity._ccNode, entity._parent && entity._parent._ccNode);
         // @ifdef EDITOR
         if (this.sceneView) {
-            this.sceneView.game.setEnvironment();
             this.sceneView._setParentNode(entity._ccNodeInScene, entity._parent && entity._parent._ccNodeInScene);
         }
         // @endif
@@ -196,6 +200,7 @@ var RenderContext = (function () {
 
     RenderContext.prototype._setParentNode = function (node, parent) {
         if (node) {
+            this.game.setEnvironment();
             if (parent) {
                 parent.addChild(node);
             }
@@ -205,52 +210,29 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * @param {Entity} entityParent
-     * @param {Entity} [customFirstChildEntity=null]
-     * @returns {number}
-     */
-    RenderContext.prototype._getChildrenOffset = function (entityParent, customFirstChildEntity) {
-        if (entityParent) {
-            var cocosParent = inSceneView ? entityParent._ccNodeInScene : entityParent._ccNode;
-            var firstChildEntity = customFirstChildEntity || entityParent._children[0];
-            if (firstChildEntity) {
-                var firstChildCocos = inSceneView ? firstChildEntity._ccNodeInScene : firstChildEntity._ccNode;
-                var offset = cocosParent.children.indexOf(firstChildCocos);
-                if (offset !== -1) {
-                    return offset;
-                }
-                else if (customFirstChildEntity) {
-                    return cocosParent.children.length;
-                }
-                else {
-                    Fire.error("%s's cocos object not contains in its cocos parent's children", firstChildEntity.name);
-                    return -1;
-                }
-            }
-            else {
-                return cocosParent.children.length;
-            }
-        }
-        else {
-            return 0;   // the root of hierarchy
-        }
-    };
-
     RenderContext.prototype.onEntityIndexChanged = function (entity, oldIndex, newIndex) {
         this.game.setEnvironment();
         entity._ccNode.setLocalZOrder(newIndex);
+        // @ifdef EDITOR
+        if (this.sceneView) {
+            this.sceneView.game.setEnvironment();
+            entity._ccNodeInScene.setLocalZOrder(newIndex);
+        }
+        // @endif
     };
 
     RenderContext.prototype.onSceneLaunched = function (scene) {
         // attach root nodes
         this._addToScene(scene);
+        // @ifdef EDITOR
         if (this.sceneView) {
             this.sceneView._addToScene(scene);
         }
+        // @endif
     };
 
     RenderContext.prototype._addToScene = function (scene) {
+        this.game.setEnvironment();
         var entities = scene.entities;
         var i = 0, len = entities.length;
         for (; i < len; i++) {
@@ -276,11 +258,13 @@ var RenderContext = (function () {
      * @param {Entity} entity - must have parent, and not scene gizmo
      */
     var _onChildEntityCreated = function (entity, hasSceneView) {
+        this.game.setEnvironment();
         entity._ccNode = new cc.Node();
         entity._ccNode.setAnchorPoint(0, 1);
         entity._parent._ccNode.addChild(entity._ccNode);
         // @ifdef EDITOR
         if (hasSceneView) {
+            this.sceneView.game.setEnvironment();
             entity._ccNodeInScene = new cc.Node();
             entity._ccNodeInScene.setAnchorPoint(0, 1);
             entity._parent._ccNodeInScene.addChild(entity._ccNodeInScene);
@@ -323,6 +307,7 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype._addSprite = function (tex, parentNode) {
+        this.game.setEnvironment();
         var sprite = new cc.Sprite(tex);
         sprite.setAnchorPoint(0, 1);
         parentNode.addChild(sprite, 0);
@@ -330,16 +315,14 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.addSprite = function (target) {
-        var tex = createTexture(target._sprite) || emptyTexture;
+        var tex = createTexture(target._sprite);
 
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
-            this.game.setEnvironment();
             target._renderObj = this._addSprite(tex, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            this.sceneView.game.setEnvironment();
             target._renderObjInScene =  this._addSprite(tex, target.entity._ccNodeInScene);
         }
         // @endif
@@ -372,37 +355,33 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.updateSpriteColor = function (target) {
-        if (target._renderObj || target._renderObjInScene) {
-            var tint = target._color.toCCColor();
-            if (target._renderObj) {
-                target._renderObj.setColor(tint);
-            }
-            // @ifdef EDITOR
-            if (target._renderObjInScene) {
-                target._renderObjInScene.setColor(tint);
-            }
-            // @endif
+        var tint = target._color.toCCColor();
+        if (target._renderObj) {
+            target._renderObj.setColor(tint);
         }
-        else {
+        // @ifdef EDITOR
+        if (target._renderObjInScene) {
+            target._renderObjInScene.setColor(tint);
+        }
+        if (!target._renderObj && !target._renderObjInScene) {
             Fire.error('' + target + ' must be added to render context first!');
         }
+        // @endif
     };
 
     RenderContext.prototype.updateMaterial = function (target) {
-        if (target._renderObj || target._renderObjInScene) {
-            var tex = createTexture(target._sprite) || emptyTexture;
-            if (target._renderObj) {
-                target._renderObj.setSpriteFrame(tex);
-            }
-            // @ifdef EDITOR
-            if (target._renderObjInScene) {
-                target._renderObjInScene.setSpriteFrame(tex);
-            }
-            // @endif
+        var tex = createTexture(target._sprite);
+        if (target._renderObj) {
+            target._renderObj.setSpriteFrame(tex);
         }
-        else {
+        // @ifdef EDITOR
+        if (target._renderObjInScene) {
+            target._renderObjInScene.setSpriteFrame(tex);
+        }
+        if (!target._renderObj && !target._renderObjInScene) {
             Fire.error('' + target + ' must be added to render context first!');
         }
+        // @endif
     };
 
     RenderContext.prototype.updateTransform = function (target, matrix) {
@@ -444,7 +423,7 @@ var RenderContext = (function () {
             return new cc.SpriteFrame(img, frame);
         }
         else {
-            return null;
+            return emptyTexture;
         }
     }
 
@@ -452,6 +431,37 @@ var RenderContext = (function () {
 })();
 
 // @ifdef DEV
+/**
+ * @param {Entity} entityParent
+ * @param {Entity} [customFirstChildEntity=null]
+ * @return {number}
+ */
+RenderContext.prototype._getChildrenOffset = function (entityParent, customFirstChildEntity) {
+    if (entityParent) {
+        var cocosParent = this.inSceneView ? entityParent._ccNodeInScene : entityParent._ccNode;
+        var firstChildEntity = customFirstChildEntity || entityParent._children[0];
+        if (firstChildEntity) {
+            var firstChildCocos = this.inSceneView ? firstChildEntity._ccNodeInScene : firstChildEntity._ccNode;
+            var offset = cocosParent.children.indexOf(firstChildCocos);
+            if (offset !== -1) {
+                return offset;
+            }
+            else if (customFirstChildEntity) {
+                return cocosParent.children.length;
+            }
+            else {
+                Fire.error("%s's cocos object not contains in its cocos parent's children", firstChildEntity.name);
+                return -1;
+            }
+        }
+        else {
+            return cocosParent.children.length;
+        }
+    }
+    else {
+        return 0;   // the root of hierarchy
+    }
+};
 RenderContext.prototype.checkMatchCurrentScene = function () {
     var entities = Engine._scene.entities;
     var cocosGameNodes = this.stage.children;
