@@ -79,19 +79,19 @@ var RenderContext = (function () {
 
     Object.defineProperty(RenderContext.prototype, 'width', {
         get: function () {
-            return this.renderer.width;
+            return this.size.x;
         },
         set: function (value) {
-            this.renderer.resize(value, this.renderer.height);
+            this.size = v2(value, this.height);
         }
     });
 
     Object.defineProperty(RenderContext.prototype, 'height', {
         get: function () {
-            return this.renderer.height;
+            return this.size.y;
         },
         set: function (value) {
-            this.renderer.resize(this.renderer.width, value);
+            this.size = v2(this.width, value);
         }
     });
 

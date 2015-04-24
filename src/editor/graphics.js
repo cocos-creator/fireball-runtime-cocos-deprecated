@@ -1,4 +1,5 @@
-function Graphics (parent) {
+function Graphics (parent, renderContext) {
+    this.renderContext = renderContext || Fire.Engine._renderContext;
     this.drawNode = new cc.DrawNode();
     parent.addChild(this.drawNode);
 
@@ -31,25 +32,29 @@ Graphics.prototype.lineStyle = function (lineWidth, color24, alpha) {
     color24 = color24 || 0;
     alpha = (alpha === undefined) ? 1 : alpha;
 
-    this.drawNode.setLineWidth(lineWidth);
+    this.drawNode.setLineWidth(lineWidth / 2);
     this.drawNode.setDrawColor(color24ToColor(color24, alpha));
     return this;
 };
 
 Graphics.prototype.lineTo = function (x, y) {
-    var nextPos = cc.p(x, y);
+    var nextPos = cc.p(x, this._height - y);
     this.drawNode.drawSegment(this.lastPos, nextPos);
     this.lastPos = nextPos;
     return this;
 };
 
 Graphics.prototype.moveTo = function (x, y) {
-    this.lastPos = cc.p(x, y);
+    this.lastPos = cc.p(x, this._height - y);
     return this;
 };
 
 Graphics.prototype.endFill = function () {
     return this;
 };
+
+JS.get(Graphics.prototype, '_height', function () {
+    return this.renderContext.size.y;
+});
 
 RenderContext.Graphics = Graphics;
