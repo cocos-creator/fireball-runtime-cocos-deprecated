@@ -201,6 +201,7 @@ var RenderContext = (function () {
     RenderContext.prototype._setParentNode = function (node, parent) {
         if (node) {
             this.game.setEnvironment();
+            node.removeFromParent();
             if (parent) {
                 parent.addChild(node);
             }
