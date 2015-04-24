@@ -148,6 +148,7 @@ var RenderContext = (function () {
 
     RenderContext.prototype.onRootEntityCreated = function (entity) {
         // always create node even if is scene gizmo, to keep all their indice sync with transforms' sibling indice.
+        this.game.setEnvironment();
         entity._ccNode = new cc.Node();
         entity._ccNode.setAnchorPoint(0, 1);
         if (Engine._canModifyCurrentScene) {
@@ -157,6 +158,7 @@ var RenderContext = (function () {
         }
         // @ifdef EDITOR
         if (this.sceneView) {
+            this.sceneView.game.setEnvironment();
             entity._ccNodeInScene = new cc.Node();
             entity._ccNodeInScene.setAnchorPoint(0, 1);
             if (Engine._canModifyCurrentScene) {
@@ -316,15 +318,15 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.addSprite = function (target) {
-        var tex = createTexture(target._sprite);
-
+        var tex = this.createTexture(target._sprite);
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
             target._renderObj = this._addSprite(tex, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            target._renderObjInScene =  this._addSprite(tex, target.entity._ccNodeInScene);
+            //var texInScene = this.sceneView.createTexture(target._sprite);
+            target._renderObjInScene =  this.sceneView._addSprite(tex, target.entity._ccNodeInScene);
         }
         // @endif
 
@@ -371,12 +373,13 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.updateMaterial = function (target) {
-        var tex = createTexture(target._sprite);
+        var tex = this.createTexture(target._sprite);
         if (target._renderObj) {
             target._renderObj.setSpriteFrame(tex);
         }
         // @ifdef EDITOR
         if (target._renderObjInScene) {
+            //var texInScene = this.sceneView.createTexture(target._sprite);
             target._renderObjInScene.setSpriteFrame(tex);
         }
         if (!target._renderObj && !target._renderObjInScene) {
@@ -417,16 +420,23 @@ var RenderContext = (function () {
     /**
      * @param sprite {Sprite}
      */
-    function createTexture(sprite) {
+    RenderContext.prototype.createTexture = function (sprite) {
         if (sprite && sprite.texture && sprite.texture.image) {
-            var img = cc.textureCache.addUIImage(sprite.texture.image, sprite.texture.name);
+            //this.game.setEnvironment();
+            var key = sprite.texture._uuid || sprite.texture.id;
+            // @ifdef EDITOR
+            if (this.isSceneView) {
+                //key += '-scene';
+            }
+            // @endif
+            var img = cc.textureCache.addUIImage(sprite.texture.image, key);
             var frame = cc.rect(sprite.x, sprite.y, Math.min(img.width - sprite.x, sprite.width), Math.min(img.height - sprite.y, sprite.height));
             return new cc.SpriteFrame(img, frame);
         }
         else {
             return emptyTexture;
         }
-    }
+    };
 
     return RenderContext;
 })();
