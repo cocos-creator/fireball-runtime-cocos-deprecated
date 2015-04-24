@@ -146,9 +146,6 @@ var RenderContext = (function () {
         this.view.setDesignResolutionSize(width, height, policy);
     };
 
-    /**
-     * @param {Fire.Entity} entity
-     */
     RenderContext.prototype.onRootEntityCreated = function (entity) {
         // always create pixi node even if is scene gizmo, to keep all their indice sync with transforms' sibling indice.
         entity._ccNode = new cc.Node();
@@ -169,10 +166,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * removes a entity and all its children from scene
-     * @param {Fire.Entity} entity
-     */
     RenderContext.prototype.onEntityRemoved = function (entity) {
         if (entity._ccNode) {
             if (entity._ccNode.parent) {
@@ -190,10 +183,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * @param {Fire.Entity} entity
-     * @param {Fire.Entity} oldParent
-     */
     RenderContext.prototype.onEntityParentChanged = function (entity, oldParent) {
         this.game.setEnvironment();
         this._setParentNode(entity._ccNode, entity._parent && entity._parent._ccNode);
@@ -217,8 +206,8 @@ var RenderContext = (function () {
     };
 
     /**
-     * @param {Fire.Entity} entityParent
-     * @param {Fire.Entity} [customFirstChildEntity=null]
+     * @param {Entity} entityParent
+     * @param {Entity} [customFirstChildEntity=null]
      * @returns {number}
      */
     RenderContext.prototype._getChildrenOffset = function (entityParent, customFirstChildEntity) {
@@ -248,11 +237,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * @param {Fire.Entity} entity
-     * @param {number} oldIndex
-     * @param {number} newIndex
-     */
     RenderContext.prototype.onEntityIndexChanged = function (entity, oldIndex, newIndex) {
         this.game.setEnvironment();
         entity._ccNode.setLocalZOrder(newIndex);
@@ -289,7 +273,7 @@ var RenderContext = (function () {
     /**
      * create child nodes recursively
      * 这个方法假定parent存在
-     * @param {Fire.Entity} entity - must have parent, and not scene gizmo
+     * @param {Entity} entity - must have parent, and not scene gizmo
      */
     var _onChildEntityCreated = function (entity, hasSceneView) {
         entity._ccNode = new cc.Node();
@@ -308,11 +292,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * create cocos nodes recursively
-     * @param {Entity} entity
-     * @param {boolean} addToScene - add to cocos stage now if entity is root
-     */
     RenderContext.prototype.onEntityCreated = function (entity, addToScene) {
         this.game.setEnvironment();
         entity._ccNode = new cc.Node();
@@ -350,9 +329,6 @@ var RenderContext = (function () {
         return sprite;
     };
 
-    /**
-     * @param {Fire.SpriteRenderer} target
-     */
     RenderContext.prototype.addSprite = function (target) {
         var tex = createTexture(target._sprite) || emptyTexture;
 
@@ -371,10 +347,6 @@ var RenderContext = (function () {
         this.updateSpriteColor(target);
     };
 
-    /**
-     * @param {Fire.SpriteRenderer} target
-     * @param {boolean} show
-     */
     RenderContext.prototype.show = function (target, show) {
         if (target._renderObj) {
             target._renderObj.visible = show;
@@ -384,10 +356,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * @param target {Fire.SpriteRenderer}
-     * @param show {boolean}
-     */
     RenderContext.prototype.remove = function (target) {
         if (target._renderObj) {
             this.game.setEnvironment();
@@ -420,9 +388,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * @param target {Fire.SpriteRenderer}
-     */
     RenderContext.prototype.updateMaterial = function (target) {
         if (target._renderObj || target._renderObjInScene) {
             var tex = createTexture(target._sprite) || emptyTexture;
@@ -440,11 +405,6 @@ var RenderContext = (function () {
         }
     };
 
-    /**
-     * Set the final transform to render
-     * @param {Fire.SpriteRenderer} target
-     * @param {Fire.Matrix23} matrix - the matrix to render (Read Only)
-     */
     RenderContext.prototype.updateTransform = function (target, matrix) {
         // apply matrix
         var rot = 360 * (matrix.getRotation() / Math.PI);
@@ -465,7 +425,7 @@ var RenderContext = (function () {
     };
 
     /**
-     * @param sprite {Fire.Sprite}
+     * @param sprite {Sprite}
      */
     function createTexture(sprite) {
         if (sprite && sprite.texture && sprite.texture.image) {
@@ -482,17 +442,13 @@ var RenderContext = (function () {
 })();
 
 // @ifdef DEV
-/**
- * The debugging method that checks whether the render context matches the current scene or not.
- * @throws {string} error info
- */
 RenderContext.prototype.checkMatchCurrentScene = function () {
     var entities = Engine._scene.entities;
     var cocosGameNodes = this.stage.children;
     var cocosSceneNodes;
     if (this.sceneView) {
         cocosSceneNodes = this.sceneView.stage.children;
-        cocosSceneNodes = cocosSceneNodes[1].children;    // skip forground and background
+        cocosSceneNodes = cocosSceneNodes[1].children;    // skip foreground and background
     }
     var scope = this;
     function checkMatch (ent, gameNode, sceneNode) {
