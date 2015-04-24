@@ -1,60 +1,69 @@
-function Graphics (parent, renderContext) {
-    this.renderContext = renderContext || Fire.Engine._renderContext;
-    this.drawNode = new cc.DrawNode();
-    parent.addChild(this.drawNode);
+(function () {
 
-    // states
-    this.lastPos = cc.p(0, 0);
-}
+    var PIXEL_OFFSET = 0.5;
 
-function color24ToColor (color24, alpha) {
-    alpha = (alpha === undefined) ? 255 : alpha * 255;
-    return new cc.Color(color24 >> 16, (color24 & 0x00FF00) >> 8, (color24 & 0x0000FF), alpha);
-}
+    function Graphics (parent, renderContext) {
+        this.renderContext = renderContext || Fire.Engine._renderContext;
+        this.renderContext.game.setEnvironment();
+        this.drawNode = new cc.DrawNode();
+        parent.addChild(this.drawNode);
 
-Graphics.prototype.clear = function () {
-    this.drawNode.clear();
+        this.lineWidthFactor = (this.renderContext.game.renderType === cc.Game.RENDER_TYPE_WEBGL) ? window.devicePixelRatio : 0.5;
 
-    this.lastPos = cc.p(0, 0);
-    this.drawNode.setDrawColor(new cc.Color(255, 255, 255, 255));
-};
+        // states
+        this.lastPos = cc.p(0, 0);
+    }
 
-Graphics.prototype.beginFill = function (color24, alpha) {
-    color24 = color24 || 0;
-    alpha = (alpha === undefined) ? 1 : alpha;
+    function color24ToColor (color24, alpha) {
+        alpha = (alpha === undefined) ? 255 : alpha * 255;
+        return new cc.Color(color24 >> 16, (color24 & 0x00FF00) >> 8, (color24 & 0x0000FF), alpha);
+    }
 
-    this.drawNode.setDrawColor(color24ToColor(color24, alpha));
-    return this;
-};
+    Graphics.prototype.clear = function () {
+        this.drawNode.clear();
 
-Graphics.prototype.lineStyle = function (lineWidth, color24, alpha) {
-    lineWidth = lineWidth || 0;
-    color24 = color24 || 0;
-    alpha = (alpha === undefined) ? 1 : alpha;
+        this.lastPos = cc.p(0, 0);
+        this.drawNode.setDrawColor(new cc.Color(255, 255, 255, 255));
+    };
 
-    this.drawNode.setLineWidth(lineWidth / 2);
-    this.drawNode.setDrawColor(color24ToColor(color24, alpha));
-    return this;
-};
+    Graphics.prototype.beginFill = function (color24, alpha) {
+        color24 = color24 || 0;
+        alpha = (alpha === undefined) ? 1 : alpha;
 
-Graphics.prototype.lineTo = function (x, y) {
-    var nextPos = cc.p(x, this._height - y);
-    this.drawNode.drawSegment(this.lastPos, nextPos);
-    this.lastPos = nextPos;
-    return this;
-};
+        this.drawNode.setDrawColor(color24ToColor(color24, alpha));
+        return this;
+    };
 
-Graphics.prototype.moveTo = function (x, y) {
-    this.lastPos = cc.p(x, this._height - y);
-    return this;
-};
+    Graphics.prototype.lineStyle = function (lineWidth, color24, alpha) {
+        lineWidth = lineWidth || 0;
+        color24 = color24 || 0;
+        alpha = (alpha === undefined) ? 1 : alpha;
 
-Graphics.prototype.endFill = function () {
-    return this;
-};
+        this.drawNode.setLineWidth(lineWidth * this.lineWidthFactor);
+        this.drawNode.setDrawColor(color24ToColor(color24, alpha));
+        return this;
+    };
 
-JS.get(Graphics.prototype, '_height', function () {
-    return this.renderContext.size.y;
-});
+    Graphics.prototype.lineTo = function (x, y) {
+        var nextPos = cc.p(x + PIXEL_OFFSET, this._height - y + PIXEL_OFFSET);
+        this.drawNode.drawSegment(this.lastPos, nextPos);
+        this.lastPos = nextPos;
+        return this;
+    };
 
-RenderContext.Graphics = Graphics;
+    Graphics.prototype.moveTo = function (x, y) {
+        this.lastPos = cc.p(x + PIXEL_OFFSET, this._height - y + PIXEL_OFFSET);
+        return this;
+    };
+
+    Graphics.prototype.endFill = function () {
+        return this;
+    };
+
+    JS.get(Graphics.prototype, '_height', function () {
+        return this.renderContext.size.y;
+    });
+
+    RenderContext.Graphics = Graphics;
+
+})();
