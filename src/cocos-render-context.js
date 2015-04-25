@@ -30,7 +30,7 @@ var RenderContext = (function () {
             "showFPS" : false,
             "frameRate" : 60,
             "id" : canvas,
-            "renderMode" : 1,
+            "renderMode" : 1,       // 0: WebGL, 1:Canvas
             "jsList" : []
         }, function () {
             self.root = self.stage = new cc.Scene();
@@ -124,6 +124,10 @@ var RenderContext = (function () {
     });
 
     // functions
+
+    RenderContext.prototype.onPreRender = function () {
+        this.game.setEnvironment();
+    };
 
     RenderContext.prototype.render = function () {
         this.game.frameRun();
