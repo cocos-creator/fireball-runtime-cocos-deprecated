@@ -220,14 +220,19 @@ gulp.task('build-cocos2d', function () {
 });
 
 gulp.task('cp-cocos2d', function () {
-    var name = 'cocos2d.js';
-    
+    var name_min = 'cocos.js';
+    var name_dev = 'cocos.dev.js';
+
+    // 不论 dev 还是 min 的编辑器都要有两套 cocos
+
     var devStream = gulp.src(paths.engine.output_dev)
-        .pipe(rename(name))
-        .pipe(gulp.dest(Path.dirname(paths.output_dev)));
+        .pipe(rename(name_dev))
+        .pipe(gulp.dest(Path.dirname(paths.output_dev)))
+        .pipe(gulp.dest(Path.dirname(paths.output_min)));
 
     var minStream = gulp.src(paths.engine.output_min)
-        .pipe(rename(name))
+        .pipe(rename(name_min))
+        .pipe(gulp.dest(Path.dirname(paths.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.output_min)));
 
     return es.merge(devStream, minStream);
