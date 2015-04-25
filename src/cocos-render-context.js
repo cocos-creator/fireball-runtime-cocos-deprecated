@@ -264,13 +264,13 @@ var RenderContext = (function () {
      * 这个方法假定parent存在
      * @param {Entity} entity - must have parent, and not scene gizmo
      */
-    var _onChildEntityCreated = function (entity, hasSceneView) {
+    RenderContext.prototype._onChildEntityCreated = function (entity) {
         this.game.setEnvironment();
         entity._ccNode = new cc.Node();
         entity._ccNode.setAnchorPoint(0, 1);
         entity._parent._ccNode.addChild(entity._ccNode);
         // @ifdef EDITOR
-        if (hasSceneView) {
+        if (this.sceneView) {
             this.sceneView.game.setEnvironment();
             entity._ccNodeInScene = new cc.Node();
             entity._ccNodeInScene.setAnchorPoint(0, 1);
@@ -279,7 +279,7 @@ var RenderContext = (function () {
         // @endif
         var children = entity._children;
         for (var i = 0, len = children.length; i < len; i++) {
-            _onChildEntityCreated(children[i], hasSceneView);
+            this._onChildEntityCreated(children[i]);
         }
     };
 
@@ -309,7 +309,7 @@ var RenderContext = (function () {
 
         var children = entity._children;
         for (var i = 0, len = children.length; i < len; i++) {
-            _onChildEntityCreated(children[i], this.sceneView);
+            this._onChildEntityCreated(children[i]);
         }
     };
 
