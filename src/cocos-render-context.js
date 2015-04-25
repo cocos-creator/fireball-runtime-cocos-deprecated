@@ -348,14 +348,18 @@ var RenderContext = (function () {
 
     RenderContext.prototype.remove = function (target) {
         if (target._renderObj) {
-            this.game.setEnvironment();
-            target._renderObj.parent.removeChild(target._renderObj);
+            if (target._renderObj && target._renderObj.parent) {
+                this.game.setEnvironment();
+                target._renderObj.parent.removeChild(target._renderObj);
+            }
             target._renderObj = null;
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            this.sceneView.game.setEnvironment();
-            target._renderObjInScene.parent.removeChild(target._renderObjInScene);
+            if (target._renderObjInScene && target._renderObjInScene.parent) {
+                this.sceneView.game.setEnvironment();
+                target._renderObjInScene.parent.removeChild(target._renderObjInScene);
+            }
             target._renderObjInScene = null;
         }
         // @endif
