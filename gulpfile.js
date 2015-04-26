@@ -220,17 +220,22 @@ gulp.task('build-cocos2d', function () {
 });
 
 gulp.task('cp-cocos2d', function () {
-    var name_min = 'cocos.js';
-    var name_dev = 'cocos.dev.js';
+    var name_editor = 'cocos2d.js';
+    var name_min = 'cocos2d.min.js';
+    var name_dev = 'cocos2d.dev.js';
 
-    // 不论 dev 还是 min 的编辑器都要有两套 cocos
+    // 不论 dev 还是 min 的编辑器都要有两套 cocos 用于输出，再加一套给编辑器用的
 
     var devStream = gulp.src(paths.engine.output_dev)
+        .pipe(rename(name_editor))
+        .pipe(gulp.dest(Path.dirname(paths.output_dev)))
         .pipe(rename(name_dev))
         .pipe(gulp.dest(Path.dirname(paths.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.output_min)));
 
     var minStream = gulp.src(paths.engine.output_min)
+        .pipe(rename(name_editor))
+        .pipe(gulp.dest(Path.dirname(paths.output_min)))
         .pipe(rename(name_min))
         .pipe(gulp.dest(Path.dirname(paths.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.output_min)));
