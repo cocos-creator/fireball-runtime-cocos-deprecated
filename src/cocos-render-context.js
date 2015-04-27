@@ -8,8 +8,12 @@ var RenderContext = (function () {
      * render context 将在 cocos 中维护同样的 scene graph，这样做主要是为之后的 clipping 和 culling 提供支持。
      * 这里采用空间换时间的策略，所有 entity 都有对应的 cc.Node。
      * 毕竟一般 dummy entity 不会很多，因此这样产生的冗余对象可以忽略。
-     * 值得注意的是，sprite 等节点，被视为 entity 对应的 cc.Node 的子物体，
-     * 并且排列在所有 entity 之前，以达到最先渲染的效果。
+     * 值得注意的是，sprite 等节点，被视为 entity 对应的 cc.Node 的子物体。
+     *
+     * 渲染排序采用 localZOrder 来设置。sprite 等节点的值都为 -1，这样父 entity 本身就能最先渲染。
+     * 所有 node 的 localZOrder 都设置成和所属 entity 的 sibling index，localZOrder 在 entity 删除时并不进行更新，
+     * 因此新增 entity 时不能直接以父 entity 的 childrenCount 来计算新的 localZOrder。
+     * 另外，所有 scene node 的 localZOrder 和 game node 保持一致。
      *
      * @param {number} width
      * @param {number} height
@@ -151,25 +155,29 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.onRootEntityCreated = function (entity) {
-        // always create node even if is scene gizmo, to keep all their indice sync with transforms' sibling indice.
         this.game.setEnvironment();
-        entity._ccNode = new cc.Node();
-        entity._ccNode.setAnchorPoint(0, 1);
+        var node = new cc.Node();
+        entity._ccNode = node;
+        node.setAnchorPoint(0, 1);
+        var z = 0;
         if (Engine._canModifyCurrentScene) {
             this.game.setEnvironment();
             // attach node if created dynamically
-            this.root.addChild(entity._ccNode);
+            this.root.addChild(node);
+            z = setMaxZOrder(node, this.root);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
             this.sceneView.game.setEnvironment();
-            entity._ccNodeInScene = new cc.Node();
-            entity._ccNodeInScene.setAnchorPoint(0, 1);
+            node = new cc.Node();
+            entity._ccNodeInScene = node;
+            node.setAnchorPoint(0, 1);
             if (Engine._canModifyCurrentScene) {
                 this.sceneView.game.setEnvironment();
                 // attach node if created dynamically
-                this.sceneView.root.addChild(entity._ccNodeInScene);
+                this.sceneView.root.addChild(node);
             }
+            node.setLocalZOrder(z);
         }
         // @endif
     };
@@ -204,26 +212,46 @@ var RenderContext = (function () {
         // @endif
     };
 
+    // call after addChild
+    function setMaxZOrder (node, parent) {
+        var children = parent.getChildren();
+        var z = 0;
+        if (children.length >= 2) {
+            var prevNode = children[children.length - 2];
+            z = prevNode.getLocalZOrder() + 1;
+        }
+        node.setLocalZOrder(z);
+        return z;
+    }
+
     RenderContext.prototype._setParentNode = function (node, parent) {
         if (node) {
             this.game.setEnvironment();
             node.removeFromParent();
-            if (parent) {
-                parent.addChild(node);
-            }
-            else {
-                this.root.addChild(node);
-            }
+            parent = parent || this.root;
+            parent.addChild(node);
+            setMaxZOrder(node, parent);
         }
     };
 
     RenderContext.prototype.onEntityIndexChanged = function (entity, oldIndex, newIndex) {
+        var siblings = entity._parent ? entity._parent._children : Engine._scene.entities;
         this.game.setEnvironment();
-        entity._ccNode.setLocalZOrder(newIndex);
+        var i = 0, len = siblings.length, sibling = null;
+        for (; i < len; i++) {
+            sibling = siblings[i];
+            sibling._ccNode.setLocalZOrder(i);
+        }
         // @ifdef EDITOR
         if (this.sceneView) {
             this.sceneView.game.setEnvironment();
-            entity._ccNodeInScene.setLocalZOrder(newIndex);
+            for (i = 0; i < len; i++) {
+                sibling = siblings[i];
+                var node = sibling._ccNodeInScene;
+                if (node) {
+                    node.setLocalZOrder(i);
+                }
+            }
         }
         // @endif
     };
@@ -245,8 +273,11 @@ var RenderContext = (function () {
         for (; i < len; i++) {
             var node = this.isSceneView ? entities[i]._ccNodeInScene : entities[i]._ccNode;
             if (node) {
-                node.removeFromParent();
-                this.root.addChild(node);
+                //node.removeFromParent();
+                if (! node.getParent()) {
+                    this.root.addChild(node);
+                }
+                node.setLocalZOrder(i);
             }
         }
     };
@@ -266,15 +297,19 @@ var RenderContext = (function () {
      */
     RenderContext.prototype._onChildEntityCreated = function (entity) {
         this.game.setEnvironment();
-        entity._ccNode = new cc.Node();
-        entity._ccNode.setAnchorPoint(0, 1);
-        entity._parent._ccNode.addChild(entity._ccNode);
+        var node = new cc.Node();
+        entity._ccNode = node;
+        node.setAnchorPoint(0, 1);
+        entity._parent._ccNode.addChild(node);
+        var z = setMaxZOrder(node, entity._parent._ccNode);
         // @ifdef EDITOR
         if (this.sceneView) {
             this.sceneView.game.setEnvironment();
-            entity._ccNodeInScene = new cc.Node();
-            entity._ccNodeInScene.setAnchorPoint(0, 1);
-            entity._parent._ccNodeInScene.addChild(entity._ccNodeInScene);
+            node = new cc.Node();
+            entity._ccNodeInScene = node;
+            node.setAnchorPoint(0, 1);
+            entity._parent._ccNodeInScene.addChild(node);
+            node.setLocalZOrder(z);
         }
         // @endif
         var children = entity._children;
@@ -284,26 +319,32 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.onEntityCreated = function (entity, addToScene) {
+        var z = 0;
         this.game.setEnvironment();
-        entity._ccNode = new cc.Node();
-        entity._ccNode.setAnchorPoint(0, 1);
+        var node = new cc.Node();
+        entity._ccNode = node;
+        node.setAnchorPoint(0, 1);
         if (entity._parent) {
-            entity._parent._ccNode.addChild(entity._ccNode);
+            entity._parent._ccNode.addChild(node);
+            z = setMaxZOrder(node, entity._parent._ccNode);
         }
         else if (addToScene) {
-            this.root.addChild(entity._ccNode);
+            this.root.addChild(node);
+            z = setMaxZOrder(node, this.root);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
             this.sceneView.game.setEnvironment();
-            entity._ccNodeInScene = new cc.Node();
-            entity._ccNodeInScene.setAnchorPoint(0, 1);
+            node = new cc.Node();
+            entity._ccNodeInScene = node;
+            node.setAnchorPoint(0, 1);
             if (entity._parent) {
-                entity._parent._ccNodeInScene.addChild(entity._ccNodeInScene);
+                entity._parent._ccNodeInScene.addChild(node);
             }
             else if (addToScene) {
-                this.sceneView.root.addChild(entity._ccNodeInScene);
+                this.sceneView.root.addChild(node);
             }
+            node.setLocalZOrder(z);
         }
         // @endif
 
@@ -318,6 +359,7 @@ var RenderContext = (function () {
         var sprite = new cc.Sprite(tex);
         sprite.setAnchorPoint(0, 1);
         parentNode.addChild(sprite, 0);
+        sprite.setLocalZOrder(-1);
         return sprite;
     };
 
