@@ -383,10 +383,12 @@ var RenderContext = (function () {
     RenderContext.prototype.updateMaterial = function (target) {
         var tex = this.createTexture(target._sprite);
         if (target._renderObj) {
+            this.game.setEnvironment();
             target._renderObj.setSpriteFrame(tex);
         }
         // @ifdef EDITOR
-        if (target._renderObjInScene) {
+        if (target._renderObjInScene && this.sceneView) {
+            this.sceneView.game.setEnvironment();
             //var texInScene = this.sceneView.createTexture(target._sprite);
             target._renderObjInScene.setSpriteFrame(tex);
         }
