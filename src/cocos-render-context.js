@@ -406,19 +406,22 @@ var RenderContext = (function () {
         // @endif
 
         if (node) {
-            var rot = matrix.getRotation() * Math.R2D;
+            var trs = matrix.getTRS();
+            node.setPosition(matrix.tx, matrix.ty);
+
+            var rot = trs.rotation * Math.R2D;
             // negate the rotation because our rotation transform not the same with cocos
             rot = -rot;
-            var scale = matrix.getScale();
-            var alpha = target._color.a * 255;
-
-            node.setPosition(matrix.tx, matrix.ty);
             if (node._rotationX !== rot) {
                 node.setRotation(rot);
             }
+
+            var scale = trs.scale;
             if (node._scaleX !== scale.x || node._scaleY !== scale.y) {
                 node.setScale(scale.x, scale.y);
             }
+
+            var alpha = target._color.a * 255;
             if (node._realOpacity !== alpha) {
                 node.setOpacity(alpha);
             }
