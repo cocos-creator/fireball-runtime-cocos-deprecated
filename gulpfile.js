@@ -22,6 +22,8 @@ var paths = {
         "src/runtime.js",
         "src/extends.js",
         "src/cocos-render-context.js",
+        "src/cocos-bitmap-font.js",
+        "src/cocos-text.js",
     ],
     editor: [
         // modules in editor only
@@ -115,6 +117,10 @@ var paths = {
             "src/engine/cocos2d/core/labelttf/CCLabelTTF.js",
             "src/engine/cocos2d/core/labelttf/CCLabelTTFCanvasRenderCmd.js",
             "src/engine/cocos2d/core/labelttf/CCLabelTTFWebGLRenderCmd.js",
+
+            "src/engine/cocos2d/labels/CCLabelBMFont.js",
+            "src/engine/cocos2d/labels/CCLabelBMFontCanvasRenderCmd.js",
+            "src/engine/cocos2d/labels/CCLabelBMFontWebGLRenderCmd.js",
 
             // TODO: editor only modules
             "src/engine/cocos2d/shape-nodes/CCDrawNode.js",
