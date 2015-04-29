@@ -1,9 +1,4 @@
-﻿// unload asset
-Fire.BitmapFont.prototype._onPreDestroy = function () {
-    Fire.Asset.prototype._onPreDestroy.call(this);
-};
-
-var _getBitmapFontInfo = function (target) {
+﻿var _getBitmapFontInfo = function (target) {
     var bitmapFont = target.bitmapFont;
     if (!bitmapFont) {
         return;
@@ -82,10 +77,12 @@ RenderContext.prototype.getTextSize = function (target) {
         h = target._renderObj.height;
 
     }
+    // @ifdef EDITOR
     else if (target._renderObjInScene) {
         w = target._renderObjInScene.width;
         h = target._renderObjInScene.height;
     }
+    // @endif
     return new Vec2(w, h);
 };
 
@@ -94,10 +91,12 @@ RenderContext.prototype.setText = function (target, newText) {
         this.game.setEnvironment();
         target._renderObj.setString(newText);
     }
+    // @ifdef EDITOR
     if (this.sceneView && target._renderObjInScene) {
         this.sceneView.game.setEnvironment();
         target._renderObjInScene.setString(newText);
     }
+    // @endif
 };
 
 RenderContext.prototype.setAlign = function (target) {
@@ -105,32 +104,17 @@ RenderContext.prototype.setAlign = function (target) {
         this.game.setEnvironment();
         target._renderObj.setAlignment(target.align);
     }
+    // @ifdef EDITOR
     if (this.sceneView && target._renderObjInScene) {
         this.sceneView.game.setEnvironment();
         target._renderObjInScene.setAlignment(target.align);
     }
+    // @endif
 };
 
 RenderContext.prototype.updateBitmapFont = function (target) {
     this.remove(target);
     this.addBitmapText(target);
-};
-
-RenderContext.prototype.remove = function (target) {
-    if (target._renderObj) {
-        if (target._renderObj && target._renderObj.parent) {
-            this.game.setEnvironment();
-            target._renderObj.parent.removeChild(target._renderObj);
-        }
-        target._renderObj = null;
-    }
-    if (this.sceneView) {
-        if (target._renderObjInScene && target._renderObjInScene.parent) {
-            this.sceneView.game.setEnvironment();
-            target._renderObjInScene.parent.removeChild(target._renderObjInScene);
-        }
-        target._renderObjInScene = null;
-    }
 };
 
 RenderContext.prototype.addBitmapText = function (target) {
@@ -147,6 +131,7 @@ RenderContext.prototype.addBitmapText = function (target) {
         target.entity._ccNode.addChild(node);
         node.setLocalZOrder(-1);
     }
+    // @ifdef EDITOR
     if (this.sceneView) {
         this.sceneView.game.setEnvironment();
         node = new cc.LabelBMFont(target.text, info);
@@ -154,37 +139,7 @@ RenderContext.prototype.addBitmapText = function (target) {
         target.entity._ccNodeInScene.addChild(node);
         node.setLocalZOrder(-1);
     }
+    // @endif
 };
 
-RenderContext.updateBitmapTextTransform = function (target, matrix) {
-    var isGameView = Engine._curRenderContext === Engine._renderContext;
-
-    var node;
-    if (isGameView && target._renderObj) {
-        node = target._renderObj;
-    }
-    else if (target._renderObjInScene) {
-        node = target._renderObjInScene;
-    }
-
-    if (node){
-        Engine._curRenderContext.game.setEnvironment();
-
-        var rot = matrix.getRotation() * Math.R2D;
-        // negate the rotation because our rotation transform not the same with cocos
-        rot = -rot;
-        var scale = matrix.getScale();
-        var alpha = 255;
-
-        node.setPosition(matrix.tx, matrix.ty);
-        if (node._rotationX !== rot) {
-            node.setRotation(rot);
-        }
-        if (node._scaleX !== scale.x || node._scaleY !== scale.y) {
-            node.setScale(scale.x, scale.y);
-        }
-        if (node._realOpacity !== alpha) {
-            node.setOpacity(alpha);
-        }
-    }
-};
+RenderContext.prototype.updateBitmapTextTransform = RenderContext.prototype.updateTransform;

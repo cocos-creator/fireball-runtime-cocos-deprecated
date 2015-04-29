@@ -1,4 +1,3 @@
-
 function _getTextInfo (target) {
     if (target) {
         var info = {};
@@ -23,7 +22,8 @@ var _updateTextStyle = function (target, node) {
     var info = _getTextInfo(target);
     node.setFontName(info.fontName);
     node.setFontSize(info.fontSize);
-    node.setFontFillColor(info.fillColor);
+    node.color = info.fillColor;
+    node.setOpacity(target.color.a * 255);
     node.setHorizontalAlignment(info.hAlignment);
 }
 
@@ -32,10 +32,12 @@ RenderContext.prototype.setTextStyle = function (target) {
         this.game.setEnvironment();
         _updateTextStyle(target, target._renderObj);
     }
+    // @ifdef EDITOR
     if (this.sceneView && target._renderObjInScene) {
         this.sceneView.game.setEnvironment();
         _updateTextStyle(target, target._renderObjInScene);
     }
+    // @endif
 };
 
 RenderContext.prototype.setTextContent = function (target, newText) {
@@ -43,10 +45,12 @@ RenderContext.prototype.setTextContent = function (target, newText) {
         this.game.setEnvironment();
         target._renderObj.setString(newText);
     }
+    // @ifdef EDITOR
     if (this.sceneView && target._renderObjInScene) {
         this.sceneView.game.setEnvironment();
         target._renderObjInScene.setString(newText);
     }
+    // @endif
 };
 
 RenderContext.prototype.addText = function (target) {
@@ -62,13 +66,14 @@ RenderContext.prototype.addText = function (target) {
         target._renderObj = node;
         target.entity._ccNode.addChild(node);
     }
+    // @ifdef EDITOR
     if (this.sceneView) {
         this.sceneView.game.setEnvironment();
         node = new cc.LabelTTF(target.text);
         target._renderObjInScene = node;
         target.entity._ccNodeInScene.addChild(node);
     }
-
+    // @endif
     if (node) {
         node.anchorX = 0;
         node.anchorY = 1;
@@ -85,42 +90,14 @@ RenderContext.prototype.getTextSize = function (target) {
         h = target._renderObj.height;
 
     }
+    // @ifdef EDITOR
     else if (target._renderObjInScene) {
         w = target._renderObjInScene.width;
         h = target._renderObjInScene.height;
     }
+    // @endif
     return new Vec2(w, h);
 };
 
-RenderContext.updateTextTransform = function (target, matrix) {
-    var isGameView = Engine._curRenderContext === Engine._renderContext;
+RenderContext.prototype.updateTextTransform = RenderContext.prototype.updateTransform;
 
-    var node;
-    if (isGameView && target._renderObj) {
-        node = target._renderObj;
-    }
-    else if (target._renderObjInScene) {
-        node = target._renderObjInScene;
-    }
-
-    if (node){
-        Engine._curRenderContext.game.setEnvironment();
-
-        var rot = matrix.getRotation() * Math.R2D;
-        // negate the rotation because our rotation transform not the same with cocos
-        rot = -rot;
-        var scale = matrix.getScale();
-        var alpha = target._color.a * 255;
-
-        node.setPosition(matrix.tx, matrix.ty);
-        if (node._rotationX !== rot) {
-            node.setRotation(rot);
-        }
-        if (node._scaleX !== scale.x || node._scaleY !== scale.y) {
-            node.setScale(scale.x, scale.y);
-        }
-        if (node._realOpacity !== alpha) {
-            node.setOpacity(alpha);
-        }
-    }
-};
