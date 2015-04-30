@@ -43,6 +43,10 @@ var RenderContext = (function () {
         });
         this.game.run();
         this.game.pause();
+        if (! emptyTexture) {
+            this.game.setEnvironment();
+            emptyTexture = new cc.SpriteFrame(new cc.Texture2D(), cc.rect());
+        }
 
         var antialias = false;
 
@@ -57,7 +61,7 @@ var RenderContext = (function () {
         this.renderer = this.view = this.game.view;
     }
 
-    var emptyTexture = new cc.Texture2D();
+    var emptyTexture = null;
 
     // static
 
