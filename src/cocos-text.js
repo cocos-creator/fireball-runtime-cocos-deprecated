@@ -63,6 +63,7 @@ RenderContext.prototype.addText = function (target) {
     if (inGame) {
         this.game.setEnvironment();
         node = new cc.LabelTTF(target.text);
+        node.setAnchorPoint(0, 1);
         target._renderObj = node;
         target.entity._ccNode.addChild(node);
     }
@@ -70,13 +71,12 @@ RenderContext.prototype.addText = function (target) {
     if (this.sceneView) {
         this.sceneView.game.setEnvironment();
         node = new cc.LabelTTF(target.text);
+        node.setAnchorPoint(0, 1);
         target._renderObjInScene = node;
         target.entity._ccNodeInScene.addChild(node);
     }
     // @endif
     if (node) {
-        node.anchorX = 0;
-        node.anchorY = 1;
         this.setTextStyle(target);
         node.setLocalZOrder(-1);
     }
@@ -84,19 +84,16 @@ RenderContext.prototype.addText = function (target) {
 
 RenderContext.prototype.getTextSize = function (target) {
     var inGame = !(target.entity._objFlags & HideInGame);
-    var w = 0, h = 0;
+    var size = null;
     if (inGame && target._renderObj) {
-        w = target._renderObj.width;
-        h = target._renderObj.height;
-
+        size = target._renderObj.getContentSize();
     }
     // @ifdef EDITOR
     else if (target._renderObjInScene) {
-        w = target._renderObjInScene.width;
-        h = target._renderObjInScene.height;
+        size = target._renderObjInScene.getContentSize();
     }
     // @endif
-    return new Vec2(w, h);
+    return size ? new Vec2(size.width, size.height) : Vec2.zero;
 };
 
 RenderContext.prototype.updateTextTransform = RenderContext.prototype.updateTransform;
