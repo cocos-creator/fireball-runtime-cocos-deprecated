@@ -1,6 +1,6 @@
 {
   "name": "fireball-runtime-cocos",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Cocos runtime of Fireball engine for html5",
   "homepage": "https://github.com/fireball-x/runtime-cocos",
   "license": "MIT",
