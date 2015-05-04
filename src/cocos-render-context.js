@@ -385,9 +385,11 @@ var RenderContext = (function () {
 
     RenderContext.prototype.show = function (target, show) {
         if (target._renderObj) {
+            this.game.setEnvironment();
             target._renderObj.visible = show;
         }
         if (target._renderObjInScene) {
+            this.sceneView.game.setEnvironment();
             target._renderObjInScene.visible = show;
         }
     };
@@ -413,16 +415,17 @@ var RenderContext = (function () {
 
     RenderContext.prototype.updateColor = function (target) {
         var tint = target._color.toCCColor();
+        var alpha = target._color.a * 255;
         if (target._renderObj) {
             this.game.setEnvironment();
             target._renderObj.setColor(tint);
-            target._renderObj.setOpacity(target._color.a * 255);
+            target._renderObj.setOpacity(alpha);
         }
         // @ifdef EDITOR
         if (this.sceneView && target._renderObjInScene) {
             this.sceneView.game.setEnvironment();
             target._renderObjInScene.setColor(tint);
-            target._renderObjInScene.setOpacity(target._color.a * 255);
+            target._renderObjInScene.setOpacity(alpha);
         }
         if (!target._renderObj && !target._renderObjInScene) {
             Fire.error('' + target + ' must be added to render context first!');
