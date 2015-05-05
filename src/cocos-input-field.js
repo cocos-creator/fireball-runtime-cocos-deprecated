@@ -174,14 +174,17 @@ RenderContext.prototype.initInputField = function (target) {
 };
 
 RenderContext.prototype.getTextSize = function (target) {
-    var inGame = !(target.entity._objFlags & HideInGame);
     var size = null;
-    if (inGame && target._renderObj) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         size = target._renderObj.getContentSize();
     }
     // @ifdef EDITOR
-    else if (target._renderObjInScene) {
-        size = target._renderObjInScene.getContentSize();
+    if (! size) {
+        obj = this.getRenderObjInScene(target);
+        if (obj) {
+            size = target._renderObjInScene.getContentSize();
+        }
     }
     // @endif
     return size ? new Vec2(size.width, size.height) : Vec2.zero;
