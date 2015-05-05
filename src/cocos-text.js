@@ -1,8 +1,8 @@
 function _getTextInfo (target) {
     if (target) {
         var info = {};
-        if (target.fontType !== Fire.Text.FontType.Custom){
-            info.fontName = Fire.Text.FontType[target.fontType].toLowerCase();
+        if (target.fontType !== Fire.FontType.Custom){
+            info.fontName = Fire.FontType[target.fontType].toLowerCase();
         }
         else{
             info.fontName = target.customFontType;

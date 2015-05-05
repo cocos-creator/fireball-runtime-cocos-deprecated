@@ -24,6 +24,7 @@ var paths = {
         "src/cocos-render-context.js",
         "src/cocos-bitmap-font.js",
         "src/cocos-text.js",
+        "src/cocos-input-field.js",
     ],
     editor: [
         // modules in editor only
@@ -147,6 +148,17 @@ var paths = {
             "src/engine/cocos2d/shaders/CCShaderCache.js",
             "src/engine/cocos2d/shaders/CCGLProgram.js",
             "src/engine/cocos2d/shaders/CCGLStateCache.js",
+
+            "src/engine/cocos2d/core/CCActionManager.js",
+            "src/engine/cocos2d/core/platform/CCEGLView.js",
+            "src/engine/extensions/gui/control-extension/CCControl.js",
+            "src/engine/extensions/gui/control-extension/CCInvocation.js",
+            "src/engine/extensions/gui/control-extension/CCScale9Sprite.js",
+            "src/engine/extensions/gui/control-extension/CCScale9SpriteCanvasRenderCmd.js",
+            "src/engine/extensions/gui/control-extension/CCScale9SpriteWebGLRenderCmd.js",
+            "src/engine/extensions/gui/control-extension/CCControlButton.js",
+            "src/engine/extensions/editbox/CCdomNode.js",
+            "src/engine/extensions/editbox/CCEditBox.js",
         ],
         output_min: 'lib/cocos2d.js',
         output_dev: 'lib/cocos2d.dev.js'
