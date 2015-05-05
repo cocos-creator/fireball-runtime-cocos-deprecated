@@ -1,31 +1,23 @@
 // cocos-text-field
-var inSceneView = function(renderContext, target) {
-    return renderContext.sceneView && target && target._renderObjInScene;
-};
-
-var inGameView = function(target) {
-    return target && target._renderObj;
-};
-
 RenderContext.prototype.getInputText = function (target) {
-    if (inGameView(target)) {
-       return target._renderObj.getString() ;
-    }
-    if (inSceneView(this, target)) {
-        return target._renderObjInScene.getString() ;
+    var obj = this.getRenderObj(target);
+    if (obj) {
+       return obj.getString();
     }
     return null;
 };
 
 RenderContext.prototype.setInputText = function (target) {
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
-        target._renderObj.setString(target._text);
+        obj.setString(target._text);
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setString(target._text);
+        obj.setString(target._text);
     }
     // @endif
 };
@@ -38,66 +30,76 @@ RenderContext.prototype.setFontName = function (target) {
     else{
         fontName = target.customFontType;
     }
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
-        target._renderObj.setFontName(fontName);
+        obj.setFontName(fontName);
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setFontName(fontName);
+        obj.setFontName(fontName);
     }
     // @endif
 };
 
 RenderContext.prototype.setFontSize = function (target) {
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
         target._renderObj.setFontSize(target._size);
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setFontSize(target._size);
+        obj.setFontSize(target._size);
     }
     // @endif
 };
 
 RenderContext.prototype.setTextColor = function (target) {
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
-        target._renderObj.setFontColor(target._color.toCCColor());
+        obj.setFontColor(target._color.toCCColor());
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setFontColor(target._color.toCCColor());
+        obj.setFontColor(target._color.toCCColor());
     }
     // @endif
 };
 
 RenderContext.prototype.setMaxLength = function (target) {
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
-        target._renderObj.setMaxLength(target._maxLength);
+        obj.setMaxLength(target._maxLength);
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setMaxLength(target._maxLength);
+        obj.setMaxLength(target._maxLength);
     }
     // @endif
 };
 
 RenderContext.prototype.setInputFlag = function (target) {
-    if (inGameView(target)) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
         this.game.setEnvironment();
-        target._renderObj.setInputFlag(target._fontFlagType);
+        obj.setInputFlag(target._fontFlagType);
     }
     // @ifdef EDITOR
-    if (inSceneView(this, target)) {
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
         this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setInputFlag(target._fontFlagType);
+        obj.setInputFlag(target._fontFlagType);
     }
     // @endif
 };
@@ -124,6 +126,7 @@ var createEditBox = function (target) {
     return node
 };
 
+// @ifdef EDITOR
 var InputFieldDelegate = cc.EditBoxDelegate.extend({
     _target: null,
     _renderContext: null,
@@ -132,14 +135,13 @@ var InputFieldDelegate = cc.EditBoxDelegate.extend({
         this._renderContext = renderContext;
     },
     editBoxTextChanged: function (editBox, newText) {
-        // @ifdef EDITOR
         if (inSceneView(this._renderContext, this._target)) {
             this._renderContext.sceneView.game.setEnvironment();
             this._target._renderObjInScene.setString(newText);
         }
-        // @endif
     }
 })
+// @endif
 
 RenderContext.prototype.initInputField = function (target) {
     var node, delegate;
@@ -153,7 +155,9 @@ RenderContext.prototype.initInputField = function (target) {
         target._renderObj = node;
         node.setMaxLength(target._maxLength);
         delegate = new InputFieldDelegate(this ,target);
+        // @ifdef EDITOR
         node.setDelegate(delegate);
+        // @endif
         target.entity._ccNode.addChild(node);
     }
     // @ifdef EDITOR
