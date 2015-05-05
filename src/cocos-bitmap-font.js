@@ -78,31 +78,29 @@ function _getSize (obj) {
 
 RenderContext.prototype.getTextSize = function (target) {
     var size = null;
-    var obj = this.getRenderObj(target);
+    var obj = target._renderObj;
     if (obj) {
         size = _getSize(obj);
     }
     // @ifdef EDITOR
     if (! size) {
-        obj = this.getRenderObjInScene(target);
+        obj = target._renderObjInScene;
         if (obj) {
             size = _getSize(obj);
         }
     }
     // @endif
-    return size ? size : Vec2.zero;
+    return size || Vec2.zero;
 };
 
 RenderContext.prototype.setText = function (target, newText) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setString(newText);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setString(newText);
     }
     // @endif
@@ -111,13 +109,11 @@ RenderContext.prototype.setText = function (target, newText) {
 RenderContext.prototype.setAlign = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setAlignment(target.align);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setAlignment(target.align);
     }
     // @endif

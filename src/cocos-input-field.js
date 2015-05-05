@@ -10,13 +10,11 @@ RenderContext.prototype.getInputText = function (target) {
 RenderContext.prototype.setInputText = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setString(target._text);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setString(target._text);
     }
     // @endif
@@ -32,13 +30,11 @@ RenderContext.prototype.setFontName = function (target) {
     }
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setFontName(fontName);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setFontName(fontName);
     }
     // @endif
@@ -47,13 +43,11 @@ RenderContext.prototype.setFontName = function (target) {
 RenderContext.prototype.setFontSize = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         target._renderObj.setFontSize(target._size);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setFontSize(target._size);
     }
     // @endif
@@ -62,13 +56,11 @@ RenderContext.prototype.setFontSize = function (target) {
 RenderContext.prototype.setTextColor = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setFontColor(target._color.toCCColor());
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setFontColor(target._color.toCCColor());
     }
     // @endif
@@ -77,13 +69,11 @@ RenderContext.prototype.setTextColor = function (target) {
 RenderContext.prototype.setMaxLength = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setMaxLength(target._maxLength);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setMaxLength(target._maxLength);
     }
     // @endif
@@ -92,13 +82,11 @@ RenderContext.prototype.setMaxLength = function (target) {
 RenderContext.prototype.setInputFlag = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        this.game.setEnvironment();
         obj.setInputFlag(target._fontFlagType);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        this.sceneView.game.setEnvironment();
         obj.setInputFlag(target._fontFlagType);
     }
     // @endif
@@ -135,9 +123,9 @@ var InputFieldDelegate = cc.EditBoxDelegate.extend({
         this._renderContext = renderContext;
     },
     editBoxTextChanged: function (editBox, newText) {
-        if (inSceneView(this._renderContext, this._target)) {
-            this._renderContext.sceneView.game.setEnvironment();
-            this._target._renderObjInScene.setString(newText);
+        var obj = this._renderContext.getRenderObjInScene(this._target);
+        if (obj) {
+            obj.setString(newText);
         }
     }
 })
@@ -154,7 +142,7 @@ RenderContext.prototype.initInputField = function (target) {
         }
         target._renderObj = node;
         node.setMaxLength(target._maxLength);
-        delegate = new InputFieldDelegate(this ,target);
+        delegate = new InputFieldDelegate(this, target);
         // @ifdef EDITOR
         node.setDelegate(delegate);
         // @endif
@@ -177,13 +165,13 @@ RenderContext.prototype.getTextSize = function (target) {
     var size = null;
     var obj = this.getRenderObj(target);
     if (obj) {
-        size = target._renderObj.getContentSize();
+        size = obj.getContentSize();
     }
     // @ifdef EDITOR
     if (! size) {
         obj = this.getRenderObjInScene(target);
         if (obj) {
-            size = target._renderObjInScene.getContentSize();
+            size = obj.getContentSize();
         }
     }
     // @endif

@@ -28,27 +28,27 @@ var _updateTextStyle = function (target, node) {
 }
 
 RenderContext.prototype.setTextStyle = function (target) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        _updateTextStyle(target, target._renderObj);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        _updateTextStyle(target, obj);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        _updateTextStyle(target, target._renderObjInScene);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        _updateTextStyle(target, obj);
     }
     // @endif
 };
 
 RenderContext.prototype.setTextContent = function (target, newText) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        target._renderObj.setString(newText);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setString(newText);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @endif
 };
