@@ -1,8 +1,8 @@
 function _getTextInfo (target) {
     if (target) {
         var info = {};
-        if (target.fontType !== Fire.Text.FontType.Custom){
-            info.fontName = Fire.Text.FontType[target.fontType].toLowerCase();
+        if (target.fontType !== Fire.FontType.Custom){
+            info.fontName = Fire.FontType[target.fontType].toLowerCase();
         }
         else{
             info.fontName = target.customFontType;
@@ -28,27 +28,27 @@ var _updateTextStyle = function (target, node) {
 }
 
 RenderContext.prototype.setTextStyle = function (target) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        _updateTextStyle(target, target._renderObj);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        _updateTextStyle(target, obj);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        _updateTextStyle(target, target._renderObjInScene);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        _updateTextStyle(target, obj);
     }
     // @endif
 };
 
 RenderContext.prototype.setTextContent = function (target, newText) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        target._renderObj.setString(newText);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setString(newText);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @endif
 };

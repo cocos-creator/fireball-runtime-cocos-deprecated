@@ -69,45 +69,52 @@ cc.LabelBMFont.prototype.initWithString = function (str, info) {
     return false;
 };
 
-RenderContext.prototype.getTextSize = function (target) {
-    var inGame = !(target.entity._objFlags & HideInGame);
-    var w = 0, h = 0;
-    if (inGame && target._renderObj) {
-        w = target._renderObj.width;
-        h = target._renderObj.height;
+function _getSize (obj) {
+    if (obj) {
+        return new Vec2(obj.width, obj.height);
+    }
+    return null;
+};
 
+RenderContext.prototype.getTextSize = function (target) {
+    var size = null;
+    var obj = target._renderObj;
+    if (obj) {
+        size = _getSize(obj);
     }
     // @ifdef EDITOR
-    else if (target._renderObjInScene) {
-        w = target._renderObjInScene.width;
-        h = target._renderObjInScene.height;
+    if (! size) {
+        obj = target._renderObjInScene;
+        if (obj) {
+            size = _getSize(obj);
+        }
     }
     // @endif
-    return new Vec2(w, h);
+    return size || Vec2.zero;
 };
 
 RenderContext.prototype.setText = function (target, newText) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        target._renderObj.setString(newText);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setString(newText);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        obj.setString(newText);
     }
     // @endif
 };
 
 RenderContext.prototype.setAlign = function (target) {
-    if (target._renderObj) {
-        this.game.setEnvironment();
-        target._renderObj.setAlignment(target.align);
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        obj.setAlignment(target.align);
     }
     // @ifdef EDITOR
-    if (this.sceneView && target._renderObjInScene) {
-        this.sceneView.game.setEnvironment();
-        target._renderObjInScene.setAlignment(target.align);
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        obj.setAlignment(target.align);
     }
     // @endif
 };
