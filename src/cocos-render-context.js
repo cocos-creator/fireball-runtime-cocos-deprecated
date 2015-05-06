@@ -503,21 +503,17 @@ var RenderContext = (function () {
      * @param sprite {Sprite}
      */
     RenderContext.prototype.createTexture = function (sprite) {
-        if (sprite && sprite.texture && sprite.texture.image) {
-            //this.game.setEnvironment();
-            var key = sprite.texture._uuid || sprite.texture.id;
-            // @ifdef EDITOR
-            if (this.isSceneView) {
-                //key += '-scene';
+        if (sprite && sprite.texture) {
+            var img = sprite.texture.image;
+            if (img) {
+                //this.game.setEnvironment();
+                var tex = new cc.Texture2D();
+                tex.initWithElement(img);
+                var frame = cc.rect(sprite.x, sprite.y, Math.min(img.width - sprite.x, sprite.width), Math.min(img.height - sprite.y, sprite.height));
+                return new cc.SpriteFrame(tex, frame);
             }
-            // @endif
-            var img = cc.textureCache.addUIImage(sprite.texture.image, key);
-            var frame = cc.rect(sprite.x, sprite.y, Math.min(img.width - sprite.x, sprite.width), Math.min(img.height - sprite.y, sprite.height));
-            return new cc.SpriteFrame(img, frame);
         }
-        else {
-            return emptyTexture;
-        }
+        return emptyTexture;
     };
 
     return RenderContext;
