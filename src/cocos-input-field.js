@@ -163,13 +163,13 @@ RenderContext.prototype.initInputField = function (target) {
 
 RenderContext.prototype.getTextSize = function (target) {
     var size = null;
-    var obj = this.getRenderObj(target);
+    var obj = target._renderObj;
     if (obj) {
         size = obj.getContentSize();
     }
     // @ifdef EDITOR
     if (! size) {
-        obj = this.getRenderObjInScene(target);
+        obj = target._renderObjInScene;
         if (obj) {
             size = obj.getContentSize();
         }
