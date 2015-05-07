@@ -159,6 +159,8 @@ var paths = {
             "src/engine/extensions/gui/control-extension/CCControlButton.js",
             "src/engine/extensions/editbox/CCdomNode.js",
             "src/engine/extensions/editbox/CCEditBox.js",
+
+            "src/engine/extensions/spine/**/*",
         ],
         output_min: 'lib/cocos2d.js',
         output_dev: 'lib/cocos2d.dev.js'
