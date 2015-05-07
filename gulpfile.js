@@ -160,6 +160,16 @@ var paths = {
             "src/engine/extensions/editbox/CCdomNode.js",
             "src/engine/extensions/editbox/CCEditBox.js",
 
+
+            "src/engine/cocos2d/particle/CCParticleBatchNode.js",
+            "src/engine/cocos2d/particle/CCParticleBatchNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleBatchNodeWebGLRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleSystem.js",
+            "src/engine/cocos2d/particle/CCParticleSystemCanvasRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleSystemWebGLRenderCmd.js",
+            "src/engine/cocos2d/particle/CCPNGReader.js",
+            "src/engine/cocos2d/particle/CCTIFFReader.js",
+
             "src/engine/extensions/spine/**/*",
         ],
         output_min: 'lib/cocos2d.js',

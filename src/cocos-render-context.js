@@ -516,6 +516,22 @@ var RenderContext = (function () {
         return emptyTexture;
     };
 
+    /**
+     * @param sprite {Sprite}
+     */
+    RenderContext.prototype.createCCTexture2D = function (sprite) {
+        if (sprite && sprite.texture) {
+            var img = sprite.texture.image;
+            if (img) {
+                var tex = new cc.Texture2D();
+                tex.initWithElement(img);
+                return tex;
+            }
+        }
+        return null;
+    };
+
+
     return RenderContext;
 })();
 
