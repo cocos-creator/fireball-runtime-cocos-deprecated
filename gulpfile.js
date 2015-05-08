@@ -158,7 +158,14 @@ var paths = {
             "src/engine/extensions/spine/CCSkeleton.js",
             "src/engine/extensions/spine/CCSkeletonCanvasRenderCmd.js",
             "src/engine/extensions/spine/CCSkeletonWebGLRenderCmd.js",
-            "src/engine/extensions/spine/CCSkeletonAnimation.js"
+            "src/engine/extensions/spine/CCSkeletonAnimation.js",
+
+            "src/engine/cocos2d/particle/CCParticleBatchNode.js",
+            "src/engine/cocos2d/particle/CCParticleBatchNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleBatchNodeWebGLRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleSystem.js",
+            "src/engine/cocos2d/particle/CCParticleSystemCanvasRenderCmd.js",
+            "src/engine/cocos2d/particle/CCParticleSystemWebGLRenderCmd.js",
         ],
         src_editor_extends: [
             "src/engine/cocos2d/shape-nodes/CCDrawNode.js",
