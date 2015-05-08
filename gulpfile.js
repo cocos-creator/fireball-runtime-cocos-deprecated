@@ -123,12 +123,6 @@ var paths = {
             "src/engine/cocos2d/labels/CCLabelBMFontCanvasRenderCmd.js",
             "src/engine/cocos2d/labels/CCLabelBMFontWebGLRenderCmd.js",
 
-            // TODO: editor only modules
-            "src/engine/cocos2d/shape-nodes/CCDrawNode.js",
-            "src/engine/cocos2d/shape-nodes/CCDrawNodeCanvasRenderCmd.js",
-            "src/engine/cocos2d/shape-nodes/CCDrawNodeWebGLRenderCmd.js",
-            //
-
             "src/engine/cocos2d/audio/CCAudio.js",
 
             "src/engine/cocos2d/kazmath/utility.js",
@@ -160,6 +154,11 @@ var paths = {
             "src/engine/extensions/editbox/CCdomNode.js",
             "src/engine/extensions/editbox/CCEditBox.js",
 
+            "src/engine/extensions/spine/Spine.js",
+            "src/engine/extensions/spine/CCSkeleton.js",
+            "src/engine/extensions/spine/CCSkeletonCanvasRenderCmd.js",
+            "src/engine/extensions/spine/CCSkeletonWebGLRenderCmd.js",
+            "src/engine/extensions/spine/CCSkeletonAnimation.js",
 
             "src/engine/cocos2d/particle/CCParticleBatchNode.js",
             "src/engine/cocos2d/particle/CCParticleBatchNodeCanvasRenderCmd.js",
@@ -169,11 +168,18 @@ var paths = {
             "src/engine/cocos2d/particle/CCParticleSystemWebGLRenderCmd.js",
             "src/engine/cocos2d/particle/CCPNGReader.js",
             "src/engine/cocos2d/particle/CCTIFFReader.js",
-
-            "src/engine/extensions/spine/**/*",
+        ],
+        src_editor_extends: [
+            "src/engine/cocos2d/shape-nodes/CCDrawNode.js",
+            "src/engine/cocos2d/shape-nodes/CCDrawNodeCanvasRenderCmd.js",
+            "src/engine/cocos2d/shape-nodes/CCDrawNodeWebGLRenderCmd.js",
+            "src/engine/cocos2d/core/CCDrawingPrimitivesCanvas.js",
+            "src/engine/cocos2d/core/CCDrawingPrimitivesWebGL.js"
         ],
         output_min: 'lib/cocos2d.js',
-        output_dev: 'lib/cocos2d.dev.js'
+        output_dev: 'lib/cocos2d.dev.js',
+        output_editor_min: 'lib/cocos2d.editor.js',
+        output_editor_dev: 'lib/cocos2d.editor.dev.js'
     }
 };
 
@@ -236,7 +242,7 @@ gulp.task('js-all', ['js-dev', 'js-min', 'js-player-dev', 'js-player']);
 ///////////////////////////////////////////////////
 
 gulp.task('build-cocos2d', function () {
-    return gulp.src(paths.engine.src)
+    var runtime = gulp.src(paths.engine.src.concat('!**/*WebGL*'))
         .pipe(concat(Path.basename(paths.engine.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.engine.output_dev)))
         .pipe(uglify({
@@ -247,14 +253,24 @@ gulp.task('build-cocos2d', function () {
         }))
         .pipe(rename(Path.basename(paths.engine.output_min)))
         .pipe(gulp.dest(Path.dirname(paths.engine.output_min)));
+
+    var editorExtends = gulp.src(paths.engine.src_editor_extends.concat('!**/*WebGL*'))
+        .pipe(concat(Path.basename(paths.engine.output_editor_dev)))
+        .pipe(gulp.dest(Path.dirname(paths.engine.output_editor_dev)))
+        .pipe(uglify({}))
+        .pipe(rename(Path.basename(paths.engine.output_editor_min)))
+        .pipe(gulp.dest(Path.dirname(paths.engine.output_editor_min)));
+
+    return es.merge(runtime, editorExtends);
 });
 
 gulp.task('cp-cocos2d', function () {
     var name_editor = 'cocos2d.js';
+    var name_editor_extends = 'cocos2d.extends.js';
     var name_min = 'cocos2d.min.js';
     var name_dev = 'cocos2d.dev.js';
 
-    // 不论 dev 还是 min 的编辑器都要有两套 cocos 用于输出，再加一套给编辑器用的
+    // 不论 dev 还是 min 的编辑器都要有两套 cocos 用于输出，再加编辑器的核心库，还有编辑器的扩展库
 
     var devStream = gulp.src(paths.engine.output_dev)
         .pipe(rename(name_editor))
@@ -270,7 +286,15 @@ gulp.task('cp-cocos2d', function () {
         .pipe(gulp.dest(Path.dirname(paths.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.output_min)));
 
-    return es.merge(devStream, minStream);
+    var editorExtendsDev = gulp.src(paths.engine.output_editor_dev)
+        .pipe(rename(name_editor_extends))
+        .pipe(gulp.dest(Path.dirname(paths.output_dev)));
+
+    var editorExtendsMin = gulp.src(paths.engine.output_editor_min)
+        .pipe(rename(name_editor_extends))
+        .pipe(gulp.dest(Path.dirname(paths.output_min)));
+
+    return es.merge(devStream, minStream, editorExtendsDev, editorExtendsMin);
 });
 
 ///////////////////////////////////////////////////
