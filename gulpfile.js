@@ -166,8 +166,6 @@ var paths = {
             "src/engine/cocos2d/particle/CCParticleSystem.js",
             "src/engine/cocos2d/particle/CCParticleSystemCanvasRenderCmd.js",
             "src/engine/cocos2d/particle/CCParticleSystemWebGLRenderCmd.js",
-            "src/engine/cocos2d/particle/CCPNGReader.js",
-            "src/engine/cocos2d/particle/CCTIFFReader.js",
         ],
         src_editor_extends: [
             "src/engine/cocos2d/shape-nodes/CCDrawNode.js",

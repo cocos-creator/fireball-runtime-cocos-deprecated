@@ -475,7 +475,6 @@ var RenderContext = (function () {
         // @ifndef EDITOR
         node = target._renderObj;
         // @endif
-        this.game.setEnvironment();
         if (node) {
             var trs = matrix.getTRS();
             node.setPosition(matrix.tx, matrix.ty);
