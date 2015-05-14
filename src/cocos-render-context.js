@@ -465,6 +465,9 @@ var RenderContext = (function () {
             Fire.error('' + target + ' must be added to render context first!');
         }
         // @endif
+
+        // cocos2d 会把 Sprite 的颜色重新赋值
+        this.updateColor(target);
     };
 
     RenderContext.prototype.updateTransform = function (target, matrix) {
