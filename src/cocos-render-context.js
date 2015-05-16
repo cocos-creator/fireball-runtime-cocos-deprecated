@@ -42,11 +42,37 @@ var RenderContext = (function () {
             this.director.runScene(self.stage);
         });
         this.game.run();
-        this.game.pause();
+        this.game.pause();          // dont start main loop
+        this.game.director.pause(); // dont update logic before rendering
+
         if (! emptyTexture) {
             this.game.setEnvironment();
             emptyTexture = new cc.SpriteFrame(new cc.Texture2D(), cc.rect());
         }
+
+        //Engine.on('play', function () {
+        //    if (Engine.isPaused) {
+        //        //self.game.setEnvironment();
+        //        //self.game.director.resume();
+        //        //self.game.frameRun();
+        //    }
+        //    else {
+        //        self.game.setEnvironment();
+        //        self.game.director.resume();
+        //    }
+        //});
+        //Engine.on('pause', function () {
+        //    self.game.setEnvironment();
+        //    self.game.director.pause();
+        //});
+        //Engine.on('resume', function () {
+        //    self.game.setEnvironment();
+        //    self.game.director.resume();
+        //});
+        //Engine.on('stop', function () {
+        //    self.game.setEnvironment();
+        //    self.game.director.pause();
+        //});
 
         var antialias = false;
 
