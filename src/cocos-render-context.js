@@ -374,7 +374,7 @@ var RenderContext = (function () {
         }
     };
 
-    RenderContext.prototype._addNormalSprite = function (tex, parentNode) {
+    RenderContext.prototype._createNormalSprite = function (tex, parentNode) {
         this.game.setEnvironment();
         var sprite = new cc.Sprite(tex);
         sprite.setAnchorPoint(0, 1);
@@ -383,16 +383,16 @@ var RenderContext = (function () {
         return sprite;
     };
 
-    RenderContext.prototype.addNormalSprite = function (target) {
+    RenderContext.prototype._addNormalSprite = function (target) {
         var tex = this.createTexture(target._sprite);
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
-            target._renderObj = this._addNormalSprite(tex, target.entity._ccNode);
+            target._renderObj = this._createNormalSprite(tex, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
             //var texInScene = this.sceneView.createTexture(target._sprite);
-            target._renderObjInScene =  this.sceneView._addNormalSprite(tex, target.entity._ccNodeInScene);
+            target._renderObjInScene =  this.sceneView._createNormalSprite(tex, target.entity._ccNodeInScene);
         }
         // @endif
 
@@ -400,8 +400,7 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.updateImageType = function (target) {
-        var obj = (target._renderObj || target._renderObjInScene);
-        var isSlicedNode = obj instanceof cc.Scale9Sprite;
+        var isSlicedNode = target._renderObj instanceof cc.Scale9Sprite;
         var isSlicedSprite = target._imageType === Fire.ImageType.Sliced;
         if (isSlicedNode !== isSlicedSprite){
             this.remove(target);
@@ -410,18 +409,26 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.addSprite = function (target) {
-        obj = (target._renderObj || target._renderObjInScene);
-        if (! obj) {
+        if (! target._renderObj) {
             if (target._imageType === Fire.ImageType.Simple) {
-                this.addNormalSprite(target);
+                this._addNormalSprite(target);
             }
             else if (target._imageType === Fire.ImageType.Sliced) {
-                this.addScale9Sprite(target);
+                this._addScale9Sprite(target);
             }
         }
     };
 
-    RenderContext.prototype._addScale9Sprite = function (target, parentNode) {
+    RenderContext.prototype._createScale9Sprite = function (tex, capInsets, parentNode) {
+        this.game.setEnvironment();
+        var sprite = new cc.Scale9Sprite(tex, capInsets);
+        sprite.setAnchorPoint(0, 1);
+        parentNode.addChild(sprite, 0);
+        sprite.setLocalZOrder(-1);
+        return sprite;
+    };
+
+    RenderContext.prototype._addScale9Sprite = function (target) {
         var tex = this.createTexture(target._sprite);
 
         var capInsets = new cc.Rect();
@@ -431,22 +438,14 @@ var RenderContext = (function () {
             capInsets.width = target._sprite.borderLeft;
             capInsets.height = target._sprite.borderRight;
         }
-        this.game.setEnvironment();
-        var sprite = new cc.Scale9Sprite(tex, capInsets);
-        sprite.setAnchorPoint(0, 1);
-        parentNode.addChild(sprite, 0);
-        sprite.setLocalZOrder(-1);
-        return sprite;
-    };
 
-    RenderContext.prototype.addScale9Sprite = function (target) {
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
-            target._renderObj = this._addScale9Sprite(target, target.entity._ccNode);
+            target._renderObj = this._createScale9Sprite(tex, capInsets, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            target._renderObjInScene =  this.sceneView._addScale9Sprite(target, target.entity._ccNodeInScene);
+            target._renderObjInScene =  this.sceneView._createScale9Sprite(tex, capInsets, target.entity._ccNodeInScene);
         }
         // @endif
 
