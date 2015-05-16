@@ -399,14 +399,17 @@ var RenderContext = (function () {
         this.updateColor(target);
     };
 
-    RenderContext.prototype.addSprite = function (target) {
+    RenderContext.prototype.updateImageType = function (target) {
         var obj = (target._renderObj || target._renderObjInScene);
         var isSlicedNode = obj instanceof cc.Scale9Sprite;
         var isSlicedSprite = target._imageType === Fire.ImageType.Sliced;
         if (isSlicedNode !== isSlicedSprite){
             this.remove(target);
         }
+        this.addSprite(target);
+    };
 
+    RenderContext.prototype.addSprite = function (target) {
         obj = (target._renderObj || target._renderObjInScene);
         if (! obj) {
             if (target._imageType === Fire.ImageType.Simple) {
@@ -422,11 +425,12 @@ var RenderContext = (function () {
         var tex = this.createTexture(target._sprite);
 
         var capInsets = new cc.Rect();
-        capInsets.x = target._sprite.borderTop;
-        capInsets.y = target._sprite.borderBottom;
-        capInsets.width = target._sprite.borderLeft;
-        capInsets.height = target._sprite.borderRight;
-
+        if (target._sprite) {
+            capInsets.x = target._sprite.borderTop;
+            capInsets.y = target._sprite.borderBottom;
+            capInsets.width = target._sprite.borderLeft;
+            capInsets.height = target._sprite.borderRight;
+        }
         this.game.setEnvironment();
         var sprite = new cc.Scale9Sprite(tex, capInsets);
         sprite.setAnchorPoint(0, 1);
