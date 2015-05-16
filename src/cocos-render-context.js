@@ -374,7 +374,7 @@ var RenderContext = (function () {
         }
     };
 
-    RenderContext.prototype._addSprite = function (tex, parentNode) {
+    RenderContext.prototype._createNormalSprite = function (tex, parentNode) {
         this.game.setEnvironment();
         var sprite = new cc.Sprite(tex);
         sprite.setAnchorPoint(0, 1);
@@ -383,20 +383,90 @@ var RenderContext = (function () {
         return sprite;
     };
 
-    RenderContext.prototype.addSprite = function (target) {
+    RenderContext.prototype._addNormalSprite = function (target) {
         var tex = this.createTexture(target._sprite);
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
-            target._renderObj = this._addSprite(tex, target.entity._ccNode);
+            target._renderObj = this._createNormalSprite(tex, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
             //var texInScene = this.sceneView.createTexture(target._sprite);
-            target._renderObjInScene =  this.sceneView._addSprite(tex, target.entity._ccNodeInScene);
+            target._renderObjInScene =  this.sceneView._createNormalSprite(tex, target.entity._ccNodeInScene);
         }
         // @endif
 
         this.updateColor(target);
+    };
+
+    RenderContext.prototype.updateImageType = function (target) {
+        var isSlicedNode = target._renderObj instanceof cc.Scale9Sprite;
+        var isSlicedSprite = target._imageType === Fire.ImageType.Sliced;
+        if (isSlicedNode !== isSlicedSprite){
+            this.remove(target);
+        }
+        this.addSprite(target);
+    };
+
+    RenderContext.prototype.addSprite = function (target) {
+        if (! target._renderObj) {
+            if (target._imageType === Fire.ImageType.Simple) {
+                this._addNormalSprite(target);
+            }
+            else if (target._imageType === Fire.ImageType.Sliced) {
+                this._addScale9Sprite(target);
+            }
+        }
+    };
+
+    RenderContext.prototype._createScale9Sprite = function (tex, capInsets, parentNode) {
+        this.game.setEnvironment();
+        var sprite = new cc.Scale9Sprite(tex, capInsets);
+        sprite.setAnchorPoint(0, 1);
+        parentNode.addChild(sprite, 0);
+        sprite.setLocalZOrder(-1);
+        return sprite;
+    };
+
+    RenderContext.prototype._addScale9Sprite = function (target) {
+        var tex = this.createTexture(target._sprite);
+
+        var capInsets = new cc.Rect();
+        if (target._sprite) {
+            capInsets.x = target._sprite.borderTop;
+            capInsets.y = target._sprite.borderBottom;
+            capInsets.width = target._sprite.borderLeft;
+            capInsets.height = target._sprite.borderRight;
+        }
+
+        var inGame = !(target.entity._objFlags & HideInGame);
+        if (inGame) {
+            target._renderObj = this._createScale9Sprite(tex, capInsets, target.entity._ccNode);
+        }
+        // @ifdef EDITOR
+        if (this.sceneView) {
+            target._renderObjInScene =  this.sceneView._createScale9Sprite(tex, capInsets, target.entity._ccNodeInScene);
+        }
+        // @endif
+
+        this.updateColor(target);
+        this.updateSpriteSize(target);
+    };
+
+    RenderContext.prototype.updateSpriteSize = function (target) {
+        if (target._imageType === Fire.ImageType.Simple) {
+            return;
+        }
+        if (target._renderObj) {
+            this.game.setEnvironment();
+            target._renderObj.width = target.renderWidth;
+            target._renderObj.height = target.renderHeight;
+        }
+        if (target._renderObjInScene) {
+            this.sceneView.game.setEnvironment();
+            target._renderObjInScene.width = target.renderWidth;
+            target._renderObjInScene.height = target.renderHeight;
+        }
     };
 
     RenderContext.prototype.show = function (target, show) {
