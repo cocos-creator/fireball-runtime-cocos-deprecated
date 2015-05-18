@@ -27,3 +27,43 @@ Runtime.animate = function () {
     game.director._scheduler.update(dt);
     // @endif
 };
+
+//Runtime.render = function (renderContext) {
+//    Engine._scene.render(renderContext || Engine._renderContext);
+//};
+
+// @ifdef EDITOR
+var animateAfterRender = false;
+Runtime.animateAfterRender = function () {
+    animateAfterRender = true;
+};
+
+var animateInNextTick = false;
+Runtime.animateInNextTick = function () {
+    animateInNextTick = true;
+};
+
+Runtime.tickInEditMode = function (renderContext) {
+    if (! Engine._isPlaying) {
+        if (renderContext && renderContext.isSceneView) {
+            var now = Fire._Ticker.now();
+            Fire.Time._update(now, false, 1 / 30);
+            if (Engine._editorAnimating || animateInNextTick) {
+                //animateInNextTick = Engine._editorAnimating;
+                animateInNextTick = false;
+                this.animate();
+            }
+        }
+    }
+    else {
+        animateInNextTick = false;
+    }
+
+    this.render(renderContext);
+
+    if (animateAfterRender) {
+        this.animateInNextTick();
+        animateAfterRender = false;
+    }
+};
+// @endif
