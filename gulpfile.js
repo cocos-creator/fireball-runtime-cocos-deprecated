@@ -151,6 +151,9 @@ var paths = {
             "src/engine/extensions/gui/control-extension/CCScale9SpriteCanvasRenderCmd.js",
             "src/engine/extensions/gui/control-extension/CCScale9SpriteWebGLRenderCmd.js",
             "src/engine/extensions/gui/control-extension/CCControlButton.js",
+            "src/engine/extensions/gui/control-extension/CCScale9Sprite.js",
+            "src/engine/extensions/gui/control-extension/CCScale9SpriteCanvasRenderCmd.js",
+            "src/engine/extensions/gui/control-extension/CCScale9SpriteWebGLRenderCmd.js",
             "src/engine/extensions/editbox/CCdomNode.js",
             "src/engine/extensions/editbox/CCEditBox.js",
 

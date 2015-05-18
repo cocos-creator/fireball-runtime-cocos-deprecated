@@ -14,3 +14,16 @@ Runtime.init = function () {
     //this.director.runScene(Runtime.sceneNode);
     // @endif
 };
+
+Runtime.animate = function () {
+    // update cocos logic to tick cocos animations
+    var dt = Time.deltaTime;
+    var game = Engine._renderContext.game;
+    game.setEnvironment();
+    game.director._scheduler.update(dt);
+    // @ifdef EDITOR
+    game = Engine._renderContext.sceneView.game;
+    game.setEnvironment();
+    game.director._scheduler.update(dt);
+    // @endif
+};

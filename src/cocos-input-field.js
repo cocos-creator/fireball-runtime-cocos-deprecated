@@ -142,8 +142,8 @@ RenderContext.prototype.initInputField = function (target) {
         }
         target._renderObj = node;
         node.setMaxLength(target._maxLength);
-        delegate = new InputFieldDelegate(this, target);
         // @ifdef EDITOR
+        delegate = new InputFieldDelegate(this, target);
         node.setDelegate(delegate);
         // @endif
         target.entity._ccNode.addChild(node);

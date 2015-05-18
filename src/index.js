@@ -18,6 +18,7 @@
     var Atlas = Fire.Atlas;
 
     var Engine = Fire.Engine;
+    var Time = Fire.Time;
     var Destroying = Fire._ObjectFlags.Destroying;
     var DontDestroy = Fire._ObjectFlags.DontDestroy;
     var Hide = Fire._ObjectFlags.Hide;
