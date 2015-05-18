@@ -240,7 +240,7 @@ gulp.task('js-all', ['js-dev', 'js-min', 'js-player-dev', 'js-player']);
 ///////////////////////////////////////////////////
 
 gulp.task('build-cocos2d', function () {
-    var runtime = gulp.src(paths.engine.src.concat('!**/*WebGL*'))
+    var runtime = gulp.src(paths.engine.src)
         .pipe(concat(Path.basename(paths.engine.output_dev)))
         .pipe(gulp.dest(Path.dirname(paths.engine.output_dev)))
         .pipe(uglify({
@@ -252,7 +252,7 @@ gulp.task('build-cocos2d', function () {
         .pipe(rename(Path.basename(paths.engine.output_min)))
         .pipe(gulp.dest(Path.dirname(paths.engine.output_min)));
 
-    var editorExtends = gulp.src(paths.engine.src_editor_extends.concat('!**/*WebGL*'))
+    var editorExtends = gulp.src(paths.engine.src_editor_extends)
         .pipe(concat(Path.basename(paths.engine.output_editor_dev)))
         .pipe(gulp.dest(Path.dirname(paths.engine.output_editor_dev)))
         .pipe(uglify({}))
