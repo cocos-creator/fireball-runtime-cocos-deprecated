@@ -421,8 +421,6 @@ var RenderContext = (function () {
             target._renderObjInScene =  this.sceneView._createNormalSprite(tex, target.entity._ccNodeInScene);
         }
         // @endif
-
-        this.updateColor(target);
     };
 
     RenderContext.prototype.updateImageType = function (target) {
@@ -442,6 +440,10 @@ var RenderContext = (function () {
             else if (target._imageType === Fire.ImageType.Sliced) {
                 this._addScale9Sprite(target);
             }
+            this.updateColor(target);
+            if (target._imageType === Fire.ImageType.Sliced) {
+                this.updateSpriteSize(target);
+            }
         }
     };
 
@@ -454,16 +456,33 @@ var RenderContext = (function () {
         return sprite;
     };
 
+    function _getCapInsets (target)    {
+        var capInsets = new cc.Rect();
+        if (target._sprite) {
+            capInsets.x = target._sprite.borderLeft;
+            capInsets.y = target._sprite.borderTop;
+            var size = target._sprite.borderRight + target._sprite.borderLeft;
+            if (size > 0) {
+                capInsets.width = (target._sprite.width - size);
+            }
+            else {
+                capInsets.width = target._sprite.width;
+            }
+            size = target._sprite.borderTop + target._sprite.borderBottom;
+            if (size > 0) {
+                capInsets.height = (target._sprite.height - size);
+            }
+            else {
+                capInsets.height = target._sprite.height;
+            }
+        }
+        return capInsets;
+    };
+
     RenderContext.prototype._addScale9Sprite = function (target) {
         var tex = this.createTexture(target._sprite);
 
-        var capInsets = new cc.Rect();
-        if (target._sprite) {
-            capInsets.x = target._sprite.borderTop;
-            capInsets.y = target._sprite.borderBottom;
-            capInsets.width = target._sprite.borderLeft;
-            capInsets.height = target._sprite.borderRight;
-        }
+        var capInsets = _getCapInsets(target);
 
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
@@ -474,9 +493,6 @@ var RenderContext = (function () {
             target._renderObjInScene =  this.sceneView._createScale9Sprite(tex, capInsets, target.entity._ccNodeInScene);
         }
         // @endif
-
-        this.updateColor(target);
-        this.updateSpriteSize(target);
     };
 
     RenderContext.prototype.updateSpriteSize = function (target) {
@@ -545,6 +561,23 @@ var RenderContext = (function () {
         // @endif
     };
 
+    var _updateCapInsets = function (target) {
+        var capInsets = _getCapInsets(target);
+        if (target._renderObj) {
+            this.game.setEnvironment();
+            target._renderObj.setCapInsets(capInsets);
+        }
+        // @ifdef EDITOR
+        if (this.sceneView && target._renderObjInScene) {
+            this.sceneView.game.setEnvironment();
+            target._renderObjInScene.setCapInsets(capInsets);
+        }
+        if (!target._renderObj && !target._renderObjInScene) {
+            Fire.error('' + target + ' must be added to render context first!');
+        }
+        // @endif
+    };
+
     RenderContext.prototype.updateMaterial = function (target) {
         var tex = this.createTexture(target._sprite);
         if (target._renderObj) {
@@ -564,6 +597,10 @@ var RenderContext = (function () {
 
         // cocos2d 会把 Sprite 的颜色重新赋值
         this.updateColor(target);
+        if (target._imageType === Fire.ImageType.Sliced) {
+            this.updateSpriteSize(target);
+            _updateCapInsets(target);
+        }
     };
 
     RenderContext.prototype.updateTransform = function (target, matrix) {
