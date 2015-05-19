@@ -561,7 +561,7 @@ var RenderContext = (function () {
         // @endif
     };
 
-    RenderContext.prototype.updateCapInsets = function (target) {
+    var _updateCapInsets = function (target) {
         var capInsets = _getCapInsets(target);
         if (target._renderObj) {
             this.game.setEnvironment();
@@ -599,7 +599,7 @@ var RenderContext = (function () {
         this.updateColor(target);
         if (target._imageType === Fire.ImageType.Sliced) {
             this.updateSpriteSize(target);
-            this.updateCapInsets(target);
+            _updateCapInsets(target);
         }
     };
 
