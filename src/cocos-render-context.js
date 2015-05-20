@@ -34,7 +34,7 @@ var RenderContext = (function () {
             "showFPS" : false,
             "frameRate" : 60,
             "id" : canvas,
-            "renderMode" : 1,       // 0: WebGL, 1:Canvas
+            "renderMode" : 0,       // 0: WebGL, 1:Canvas
             "jsList" : []
         }, function () {
             self.root = self.stage = new cc.Scene();
@@ -410,15 +410,15 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype._addNormalSprite = function (target) {
-        var tex = this.createTexture(target._sprite);
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
+            var tex = this.createTexture(target._sprite);
             target._renderObj = this._createNormalSprite(tex, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            //var texInScene = this.sceneView.createTexture(target._sprite);
-            target._renderObjInScene =  this.sceneView._createNormalSprite(tex, target.entity._ccNodeInScene);
+            var texInScene = this.sceneView.createTexture(target._sprite);
+            target._renderObjInScene =  this.sceneView._createNormalSprite(texInScene, target.entity._ccNodeInScene);
         }
         // @endif
     };
@@ -480,17 +480,17 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype._addScale9Sprite = function (target) {
-        var tex = this.createTexture(target._sprite);
-
         var capInsets = _getCapInsets(target);
 
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
+            var tex = this.createTexture(target._sprite);
             target._renderObj = this._createScale9Sprite(tex, capInsets, target.entity._ccNode);
         }
         // @ifdef EDITOR
         if (this.sceneView) {
-            target._renderObjInScene =  this.sceneView._createScale9Sprite(tex, capInsets, target.entity._ccNodeInScene);
+            var texInScene = this.sceneView.createTexture(target._sprite);
+            target._renderObjInScene =  this.sceneView._createScale9Sprite(texInScene, capInsets, target.entity._ccNodeInScene);
         }
         // @endif
     };
@@ -579,16 +579,14 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype.updateMaterial = function (target) {
-        var tex = this.createTexture(target._sprite);
         if (target._renderObj) {
-            this.game.setEnvironment();
+            var tex = this.createTexture(target._sprite);
             target._renderObj.setSpriteFrame(tex);
         }
         // @ifdef EDITOR
         if (target._renderObjInScene && this.sceneView) {
-            this.sceneView.game.setEnvironment();
-            //var texInScene = this.sceneView.createTexture(target._sprite);
-            target._renderObjInScene.setSpriteFrame(tex);
+            var texInScene = this.sceneView.createTexture(target._sprite);
+            target._renderObjInScene.setSpriteFrame(texInScene);
         }
         if (!target._renderObj && !target._renderObjInScene) {
             Fire.error('' + target + ' must be added to render context first!');
@@ -639,11 +637,16 @@ var RenderContext = (function () {
      */
     RenderContext.prototype.createTexture = function (sprite) {
         if (sprite && sprite.texture) {
+            this.game.setEnvironment();
             var img = sprite.texture.image;
             if (img) {
-                //this.game.setEnvironment();
-                var tex = new cc.Texture2D();
-                tex.initWithElement(img);
+                var tex = cc.textureCache.getTextureForKey(img.src);
+                if (!tex) {
+                    tex = new cc.Texture2D();
+                    tex.initWithElement(img);
+                    tex.handleLoadedTexture();
+                    cc.textureCache.cacheImage(img.src, tex);
+                }
                 var frame = cc.rect(sprite.x, sprite.y, Math.min(img.width - sprite.x, sprite.width), Math.min(img.height - sprite.y, sprite.height));
                 return new cc.SpriteFrame(tex, frame);
             }
@@ -656,10 +659,16 @@ var RenderContext = (function () {
      */
     RenderContext.prototype.createCCTexture2D = function (sprite) {
         if (sprite && sprite.texture) {
+            this.game.setEnvironment();
             var img = sprite.texture.image;
             if (img) {
-                var tex = new cc.Texture2D();
-                tex.initWithElement(img);
+                var tex = cc.textureCache.getTextureForKey(img.src);
+                if (!tex) {
+                    tex = new cc.Texture2D();
+                    tex.initWithElement(img);
+                    tex.handleLoadedTexture();
+                    cc.textureCache.cacheImage(img.src, tex);
+                }
                 return tex;
             }
         }
