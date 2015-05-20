@@ -1,4 +1,4 @@
-
+﻿
 /**
  * The render context implemented rely on cocos2d-js
  */
@@ -456,7 +456,7 @@ var RenderContext = (function () {
         return sprite;
     };
 
-    function _getCapInsets (target)    {
+    RenderContext.prototype._getCapInsets = function (target)    {
         var capInsets = new cc.Rect();
         if (target._sprite) {
             capInsets.x = target._sprite.borderLeft;
@@ -480,7 +480,7 @@ var RenderContext = (function () {
     };
 
     RenderContext.prototype._addScale9Sprite = function (target) {
-        var capInsets = _getCapInsets(target);
+        var capInsets = this._getCapInsets(target);
 
         var inGame = !(target.entity._objFlags & HideInGame);
         if (inGame) {
@@ -561,8 +561,8 @@ var RenderContext = (function () {
         // @endif
     };
 
-    var _updateCapInsets = function (target) {
-        var capInsets = _getCapInsets(target);
+    RenderContext.prototype._updateCapInsets = function (target) {
+        var capInsets = this._getCapInsets(target);
         if (target._renderObj) {
             this.game.setEnvironment();
             target._renderObj.setCapInsets(capInsets);
@@ -597,7 +597,7 @@ var RenderContext = (function () {
         this.updateColor(target);
         if (target._imageType === Fire.ImageType.Sliced) {
             this.updateSpriteSize(target);
-            _updateCapInsets(target);
+            this._updateCapInsets(target);
         }
     };
 
