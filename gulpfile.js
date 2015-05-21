@@ -87,6 +87,7 @@ var paths = {
             "src/engine/cocos2d/core/textures/TexturesPropertyDefine.js",
             "src/engine/cocos2d/core/textures/CCTexture2D.js",
             "src/engine/cocos2d/core/textures/CCTextureCache.js",
+            "src/engine/cocos2d/core/textures/CCTextureAtlas.js",   // for WebGL
 
             "src/engine/cocos2d/core/scenes/CCScene.js",
             "src/engine/cocos2d/core/scenes/CCLoaderScene.js",
