@@ -20,6 +20,19 @@ RenderContext.prototype.setInputText = function (target) {
     // @endif
 };
 
+RenderContext.prototype.setPlaceHolder = function (target) {
+    var obj = this.getRenderObj(target);
+    if (obj) {
+        obj.setPlaceHolder(target._placeHolder);
+    }
+    // @ifdef EDITOR
+    obj = this.getRenderObjInScene(target);
+    if (obj) {
+        obj.setPlaceHolder(target._placeHolder);
+    }
+    // @endif
+};
+
 RenderContext.prototype.setFontName = function (target) {
     var fontName = "";
     if (target.fontType !== Fire.FontType.Custom){
@@ -31,11 +44,13 @@ RenderContext.prototype.setFontName = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
         obj.setFontName(fontName);
+        obj.setPlaceholderFontName(fontName);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
         obj.setFontName(fontName);
+        obj.setPlaceholderFontName(fontName);
     }
     // @endif
 };
@@ -43,12 +58,14 @@ RenderContext.prototype.setFontName = function (target) {
 RenderContext.prototype.setFontSize = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
-        target._renderObj.setFontSize(target._size);
+        obj.setFontSize(target._size);
+        obj.setPlaceholderFontSize(target._size);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
         obj.setFontSize(target._size);
+        obj.setPlaceholderFontSize(target._size);
     }
     // @endif
 };
@@ -57,11 +74,13 @@ RenderContext.prototype.setTextColor = function (target) {
     var obj = this.getRenderObj(target);
     if (obj) {
         obj.setFontColor(target._color.toCCColor());
+        obj.setPlaceholderFontColor(target._color.toCCColor());
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
         obj.setFontColor(target._color.toCCColor());
+        obj.setPlaceholderFontColor(target._color.toCCColor());
     }
     // @endif
 };
@@ -106,12 +125,15 @@ var createEditBox = function (target) {
     }
     fontSize = cc.size(target.background.renderWidth, target.background.renderHeight);
     node = new cc.EditBox(fontSize, new cc.Scale9Sprite());
+    node.setPlaceHolder(target._placeHolder);
     node.setAnchorPoint(0, 1);
-    node.setString(target._text);
+    //node.setString(target._text);
+    node.setPlaceholderFont(fontName, target._size);
+    node.setPlaceholderFontColor(target._color.toCCColor());
     node.setFont(fontName, target._size);
     node.setFontColor(target._color.toCCColor());
     node.setLocalZOrder(-1);
-    return node
+    return node;
 };
 
 // @ifdef EDITOR
@@ -123,12 +145,13 @@ var InputFieldDelegate = cc.EditBoxDelegate.extend({
         this._renderContext = renderContext;
     },
     editBoxTextChanged: function (editBox, newText) {
-        var obj = this._renderContext.getRenderObjInScene(this._target);
-        if (obj) {
-            obj.setString(newText);
-        }
+        this._target.text = newText;
+        //var obj = this._renderContext.getRenderObjInScene(this._target);
+        //if (obj) {
+        //    obj.setString(newText);
+        //}
     }
-})
+});
 // @endif
 
 RenderContext.prototype.initInputField = function (target) {
@@ -175,7 +198,7 @@ RenderContext.prototype.getTextSize = function (target) {
         }
     }
     // @endif
-    return size ? new Vec2(size.width, size.height) : Vec2.zero;
+    return size ? new Fire.Vec2(size.width, size.height) : Fire.Vec2.zero;
 };
 
 RenderContext.prototype.updateInputFieldTransform = RenderContext.prototype.updateTransform;
