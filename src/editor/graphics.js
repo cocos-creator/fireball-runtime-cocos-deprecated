@@ -8,7 +8,7 @@
         this.drawNode = new cc.DrawNode();
         parent.addChild(this.drawNode);
 
-        this.lineWidthFactor = (this.renderContext.game.renderType === cc.Game.RENDER_TYPE_WEBGL) ? window.devicePixelRatio : 0.5;
+        this.lineWidthFactor = (this.renderContext.game.renderType === cc.Game.RENDER_TYPE_WEBGL) ? 1.0 : 0.5;
 
         // states
         this.lastPos = cc.p(0, 0);
