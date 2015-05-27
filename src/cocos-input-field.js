@@ -71,16 +71,17 @@ RenderContext.prototype.setFontSize = function (target) {
 };
 
 RenderContext.prototype.setTextColor = function (target) {
+    var textColor = target._color.toCCColor();
     var obj = this.getRenderObj(target);
     if (obj) {
-        obj.setFontColor(target._color.toCCColor());
-        obj.setPlaceholderFontColor(target._color.toCCColor());
+        obj.setFontColor(textColor);
+        obj.setPlaceholderFontColor(textColor);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
     if (obj) {
-        obj.setFontColor(target._color.toCCColor());
-        obj.setPlaceholderFontColor(target._color.toCCColor());
+        obj.setFontColor(textColor);
+        obj.setPlaceholderFontColor(textColor);
     }
     // @endif
 };
