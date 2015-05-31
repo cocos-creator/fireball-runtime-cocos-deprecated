@@ -62,7 +62,7 @@ var paths = {
             "src/engine/cocos2d/core/platform/CCVisibleRect.js",
 
             "src/engine/cocos2d/core/platform/CCInputManager.js",
-            "src/engine/cocos2d/core/platform/CCInputExtension.js",
+            //"src/engine/cocos2d/core/platform/CCInputExtension.js",
 
             "src/engine/cocos2d/core/cocoa/CCAffineTransform.js",
             "src/engine/cocos2d/core/support/CCPointExtension.js",
