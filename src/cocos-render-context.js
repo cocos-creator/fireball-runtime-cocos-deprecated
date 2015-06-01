@@ -41,6 +41,9 @@ var RenderContext = (function () {
             this.view.setResolutionPolicy( cc.ResolutionPolicy.SHOW_ALL );
             this.director.runScene(self.stage);
         });
+        if ( Fire.isMobile ) {
+            this._resizeWithBrowserSize();
+        }
         this.game.run();
         this.game.pause();          // dont start main loop
         this.game.director.pause(); // dont update logic before rendering
@@ -158,6 +161,22 @@ var RenderContext = (function () {
     });
 
     // functions
+
+    RenderContext.prototype._resizeWithBrowserSize = function () {
+        function resizeEvent() {
+            var documentElement = document.documentElement;
+            var width = documentElement.clientWidth;
+            var height = documentElement.clientHeight;
+            var gameDiv = this.container.parentNode;
+            gameDiv.style.width = width + 'px';
+            gameDiv.style.height = height + 'px';
+            Fire.Screen.ContainerStrategy.EqualToFrame.apply();
+            Fire.Screen.emit('resize');
+        }
+        var bindResizeEvent = resizeEvent.bind(this);
+        window.addEventListener('resize', bindResizeEvent);
+        window.addEventListener('orientationchange', bindResizeEvent);
+    };
 
     RenderContext.prototype.getRenderObj = function (target) {
         if (target && target._renderObj) {
