@@ -4,18 +4,18 @@ RenderContext.prototype.getInputText = function (target) {
     if (obj) {
        return obj.getString();
     }
-    return null;
+    return '';
 };
 
-RenderContext.prototype.setInputText = function (target) {
+RenderContext.prototype.setInputText = function (target, text) {
     var obj = this.getRenderObj(target);
-    if (obj && obj.getString() !== target._text) {
-        obj.setString(target._text);
+    if (obj) {
+        obj.setString(text);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
-    if (obj && obj.getString() !== target._text) {
-        obj.setString(target._text);
+    if (obj) {
+        obj.setString(text);
     }
     // @endif
 };
@@ -128,7 +128,7 @@ var createEditBox = function (target) {
     node = new cc.EditBox(fontSize, new cc.Scale9Sprite());
     node.setPlaceHolder(target._placeHolder);
     node.setAnchorPoint(0, 1);
-    //node.setString(target._text);
+    //node.setString(target.text);
     node.setPlaceholderFont(fontName, target._size);
     node.setPlaceholderFontColor(target._color.toCCColor());
     node.setFont(fontName, target._size);
