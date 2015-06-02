@@ -9,12 +9,12 @@ RenderContext.prototype.getInputText = function (target) {
 
 RenderContext.prototype.setInputText = function (target) {
     var obj = this.getRenderObj(target);
-    if (obj) {
+    if (obj && obj.getString() !== target._text) {
         obj.setString(target._text);
     }
     // @ifdef EDITOR
     obj = this.getRenderObjInScene(target);
-    if (obj) {
+    if (obj && obj.getString() !== target._text) {
         obj.setString(target._text);
     }
     // @endif
@@ -147,10 +147,6 @@ var InputFieldDelegate = cc.EditBoxDelegate.extend({
     },
     editBoxTextChanged: function (editBox, newText) {
         this._target.text = newText;
-        //var obj = this._renderContext.getRenderObjInScene(this._target);
-        //if (obj) {
-        //    obj.setString(newText);
-        //}
     }
 });
 // @endif
